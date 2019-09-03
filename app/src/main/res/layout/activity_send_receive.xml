@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.jack.mdpremote.SendReceive.SendReceive">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar" />
+
+    <TextView
+        android:id="@+id/messageBoxReceivedTitleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="50dp"
+        android:text="@string/message_received"
+        android:textAlignment="center"
+        android:textColor="@color/colorBlack"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/messageBoxReceivedTextView"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/border_white_background"
+        android:text=""
+        android:textColor="@color/colorBlack"
+        android:textSize="14sp"
+        android:scrollbars = "vertical"
+        android:gravity="bottom"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/messageBoxReceivedTitleTextView" />
+
+    <TextView
+        android:id="@+id/messageBoxSentTitleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/message_sent"
+        android:textAlignment="center"
+        android:textColor="@color/colorBlack"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/messageBoxReceivedTextView" />
+
+    <TextView
+        android:id="@+id/messageBoxSentTextView"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/border_white_background"
+        android:gravity="bottom"
+        android:scrollbars="vertical"
+        android:text=" "
+        android:textColor="@color/colorBlack"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/messageBoxSentTitleTextView" />
+
+    <EditText
+        android:id="@+id/typeBoxEditText"
+        android:layout_width="match_parent"
+        android:layout_height="21dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/border_white_background"
+        android:gravity="start"
+        android:hint="Enter message"
+        android:textColor="@color/colorBlack"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/messageBoxSentTextView" />
+
+    <Button
+        android:id="@+id/sendTextBtn"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="SEND"
+        android:textSize="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/typeBoxEditText"
+        app:layout_constraintVertical_bias="0.052" />
+
+    <Button
+        android:id="@+id/clearTextBtn"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:textSize="15dp"
+        android:text="CLEAR"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/sendTextBtn"
+        app:layout_constraintTop_toBottomOf="@+id/typeBoxEditText"
+        app:layout_constraintVertical_bias="0.052" />
+
+    <Button
+        android:id="@+id/f1Btn"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:contentDescription="F1 value"
+        android:fontFamily="@font/roboto"
+        app:layout_constraintVertical_bias="0.052"
+        android:text="F1"
+        android:textAlignment="center"
+        android:textSize="15dp"
+        app:layout_constraintTop_toBottomOf="@+id/typeBoxEditText"
+        app:layout_constraintEnd_toStartOf="@+id/f2Btn" />
+
+    <Button
+        android:id="@+id/f2Btn"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="8dp"
+        android:contentDescription="F2 value"
+        app:layout_constraintVertical_bias="0.052"
+        android:text="F2"
+        android:textAlignment="center"
+        android:textSize="15dp"
+        app:layout_constraintTop_toBottomOf="@+id/typeBoxEditText"
+        app:layout_constraintEnd_toStartOf="@+id/reconfigureBtn" />
+
+    <Button
+        android:id="@+id/reconfigureBtn"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="RECONFIGURE"
+        android:textAlignment="center"
+        android:textSize="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/typeBoxEditText"
+        app:layout_constraintVertical_bias="0.052" />
+</android.support.constraint.ConstraintLayout>
