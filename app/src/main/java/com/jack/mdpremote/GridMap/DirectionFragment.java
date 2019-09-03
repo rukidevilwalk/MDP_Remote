@@ -101,7 +101,6 @@ public class DirectionFragment extends DialogFragment {
         outState.putString(TAG, direction);
     }
 
-    // when exiting dialogfragment
     @Override
     public void onDismiss(DialogInterface dialog) {
         showLog("Entering onDismiss");
