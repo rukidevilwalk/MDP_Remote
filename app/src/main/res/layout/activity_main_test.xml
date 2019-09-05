@@ -12,7 +12,6 @@
         layout="@layout/toolbar" />
 
     <view
-        android:visibility="gone"
         android:id="@+id/mapView"
         class="com.jack.mdpremote.GridMap.GridMap"
         android:layout_width="390dp"
@@ -131,14 +130,12 @@
         app:srcCompat="@drawable/ic_refresh" />
 
     <TextView
-        android:visibility="gone"
         android:id="@+id/robotStatusTitleTextView"
         android:layout_width="140dp"
         android:layout_height="25dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="10dp"
-        android:background="@drawable/border"
         android:text="@string/robot_status_title"
         android:textAlignment="center"
         android:textSize="15sp"
@@ -148,24 +145,21 @@
         app:layout_constraintTop_toBottomOf="@+id/fastestToggleBtn" />
 
     <TextView
-        android:visibility="gone"
         android:id="@+id/robotStatusTextView"
         android:layout_width="140dp"
         android:layout_height="50dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:background="@drawable/border"
         android:scrollbars="vertical"
-        android:text="no status yet"
+        android:text="-"
         android:textAlignment="center"
-        android:textColor="@color/colorRed"
+        android:textColor="@color/colorBlack"
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/mapView"
         app:layout_constraintTop_toBottomOf="@+id/robotStatusTitleTextView" />
 
     <ImageButton
-        android:visibility="gone"
         android:id="@+id/moveForwardImageBtn"
         android:layout_width="55dp"
         android:layout_height="55dp"
@@ -177,7 +171,6 @@
         app:srcCompat="@drawable/ic_arrow_move_forward" />
 
     <ImageButton
-        android:visibility="gone"
         android:id="@+id/moveBackwardImageBtn"
         android:layout_width="55dp"
         android:layout_height="55dp"
@@ -189,7 +182,6 @@
         app:srcCompat="@drawable/ic_arrow_move_backward" />
 
     <ImageButton
-        android:visibility="gone"
         android:id="@+id/turnLeftImageBtn"
         android:layout_width="55dp"
         android:layout_height="55dp"
@@ -199,7 +191,6 @@
         app:srcCompat="@drawable/ic_arrow_move_left" />
 
     <ImageButton
-        android:visibility="gone"
         android:id="@+id/turnRightImageBtn"
         android:layout_width="55dp"
         android:layout_height="55dp"
