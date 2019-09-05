@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     protected void onCreate(Bundle savedInstanceState) {
         showLog("Entering onCreate");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_no_grid);
+        setContentView(R.layout.activity_main);
 
         // create a new map
         gridMap = new GridMap(this);
@@ -661,37 +661,35 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 intent = new Intent(MainActivity.this, SendReceive.class);
                 editor.putString("receivedText", messageReceivedTextView.getText().toString());
                 break;
-
-                // For Map information/map saveload
-//            case R.id.getMapMenuItem:
-//                showToast("Get Map Information selected");
-//                intent = new Intent(MainActivity.this, MapInformation.class);
-//                break;
-//            case R.id.menuMenuItem:
-//                startActivityStatus = false;
-//                break;
-//            case R.id.saveMapMenuItem:
-//                showToast("Map saved");
-//                showLog("saveMapMenuItem: " + String.valueOf(gridMap.getMapInformation()));
-//                editor.putString("mapSaved", String.valueOf(gridMap.getMapInformation()));
-//                startActivityStatus = false;
-//                break;
-//            case R.id.loadMapMenuItem:
-//                if (sharedPreferences.contains("mapSaved")) {
-//                    try {
-//                        showLog("loadMapMenuItem: " + sharedPreferences.getString("mapSaved", ""));
-//                        gridMap.setReceivedJsonObject(new JSONObject(sharedPreferences.getString("mapSaved", "")));
-//                        gridMap.updateMapInformation();
-//                        showToast("Map loaded");
-//                        showLog("loadMapMenuItem try success");
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                        showLog("loadMapMenuItem try fail");
-//                    }
-//                } else
-//                    showToast("No map found");
-//                startActivityStatus = false;
-//                break;
+            case R.id.getMapMenuItem:
+                showToast("Get Map Information selected");
+                intent = new Intent(MainActivity.this, MapInformation.class);
+                break;
+            case R.id.menuMenuItem:
+                startActivityStatus = false;
+                break;
+            case R.id.saveMapMenuItem:
+                showToast("Map saved");
+                showLog("saveMapMenuItem: " + String.valueOf(gridMap.getMapInformation()));
+                editor.putString("mapSaved", String.valueOf(gridMap.getMapInformation()));
+                startActivityStatus = false;
+                break;
+            case R.id.loadMapMenuItem:
+                if (sharedPreferences.contains("mapSaved")) {
+                    try {
+                        showLog("loadMapMenuItem: " + sharedPreferences.getString("mapSaved", ""));
+                        gridMap.setReceivedJsonObject(new JSONObject(sharedPreferences.getString("mapSaved", "")));
+                        gridMap.updateMapInformation();
+                        showToast("Map loaded");
+                        showLog("loadMapMenuItem try success");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        showLog("loadMapMenuItem try fail");
+                    }
+                } else
+                    showToast("No map found");
+                startActivityStatus = false;
+                break;
 
             default:
                 showToast("onOptionsItemSelected has reached default");
