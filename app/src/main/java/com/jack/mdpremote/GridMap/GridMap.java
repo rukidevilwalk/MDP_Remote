@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,9 +32,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Thad on 21/1/2019.
- */
 
 public class GridMap extends View {
 
@@ -299,11 +297,28 @@ public class GridMap extends View {
         // for updating the x-axis, y-axis and direction axis (for auto mode)
         TextView xAxisTextView = ((Activity) this.getContext()).findViewById(R.id.xAxisTextView);
         TextView yAxisTextView = ((Activity) this.getContext()).findViewById(R.id.yAxisTextView);
-        TextView directionAxisTextView = ((Activity) this.getContext()).findViewById(R.id.directionAxisTextView);
-
+Spinner directionDropdown = ((Activity) this.getContext()).findViewById(R.id.spinner1);
+switch (direction){
+    case "None":
+        directionDropdown.setSelection(0);
+        break;
+    case "up":
+        directionDropdown.setSelection(1);
+        break;
+    case "down":
+        directionDropdown.setSelection(2);
+        break;
+    case "left":
+        directionDropdown.setSelection(3);
+        break;
+    case "right":
+        directionDropdown.setSelection(4);
+        break;
+}
         xAxisTextView.setText(String.valueOf(col));
         yAxisTextView.setText(String.valueOf(row));
-        directionAxisTextView.setText(direction);
+
+
     }
 
     // get current coordinate

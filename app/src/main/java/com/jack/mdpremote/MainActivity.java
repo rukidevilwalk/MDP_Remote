@@ -1,7 +1,6 @@
 package com.jack.mdpremote;
 
 import android.app.Activity;
-import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -25,9 +24,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,7 +37,6 @@ import android.widget.ToggleButton;
 
 import com.jack.mdpremote.Bluetooth.BluetoothConnectionService;
 import com.jack.mdpremote.Bluetooth.BluetoothSettings;
-import com.jack.mdpremote.GridMap.DirectionFragment;
 import com.jack.mdpremote.GridMap.GridMap;
 import com.jack.mdpremote.GridMap.MapInformation;
 import com.jack.mdpremote.SendReceive.SendReceive;
@@ -48,8 +49,7 @@ import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.util.UUID;
 
-// implements ReconfigureFragment.OnInputListener
-public class MainActivity extends AppCompatActivity implements SensorEventListener {
+public class MainActivity extends AppCompatActivity implements SensorEventListener, AdapterView.OnItemSelectedListener{
     private static final String TAG = "MainActivity";
     // for transfering of information between activities
     private static SharedPreferences sharedPreferences;
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private static long fastestTimer;          // for fastest timer
     private static boolean startActivityStatus = true;  // to indicate whether an intent should be started
     public String connStatus = "None";
-
+    String[] direction = { "None","up","down","left","right"};
     // for view by id
     GridMap gridMap;
     SendReceive sendReceive;
@@ -76,8 +76,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     Switch phoneTiltSwitch;
     Button resetMapBtn;
     ToggleButton setStartPointToggleBtn, setWaypointToggleBtn;
-    TextView xAxisTextView, yAxisTextView, directionAxisTextView;
-    ImageButton directionChangeImageBtn, exploredImageBtn, obstacleImageBtn, clearImageBtn;
+    TextView xAxisTextView, yAxisTextView;
+    ImageButton exploredImageBtn, obstacleImageBtn, clearImageBtn;
+    Spinner directionDropdown;
     static TextView messageSentTextView;
     TextView messageReceivedTextView;
     ToggleButton manualAutoToggleBtn;
@@ -138,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     protected void onCreate(Bundle savedInstanceState) {
         showLog("Entering onCreate");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_test);
+        setContentView(R.layout.activity_main);
 
         // create a new map
         gridMap = new GridMap(this);
@@ -172,8 +173,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         setWaypointToggleBtn = findViewById(R.id.setWaypointToggleBtn);
         xAxisTextView = findViewById(R.id.xAxisTextView);
         yAxisTextView = findViewById(R.id.yAxisTextView);
-        directionAxisTextView = findViewById(R.id.directionAxisTextView);
-        directionChangeImageBtn = findViewById(R.id.directionChangeImageBtn);
+        directionDropdown = findViewById(R.id.spinner1);
         exploredImageBtn = findViewById(R.id.exploredImageBtn);
         obstacleImageBtn = findViewById(R.id.obstacleImageBtn);
         clearImageBtn = findViewById(R.id.clearImageBtn);
@@ -201,10 +201,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if (savedInstanceState != null) {
             showLog("Entering savedInstanceState");
         }
-
-        // for declaraction of fragment manager
-        final FragmentManager fragmentManager = getFragmentManager();
-        final DirectionFragment directionFragment = new DirectionFragment();
 
         // allows scrolling of text view
         robotStatusTextView.setMovementMethod(new ScrollingMovementMethod());
@@ -447,16 +443,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         });
 
-        // when direction change button clicked
-        directionChangeImageBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showLog("Clicked directionChangeImageBtn");
-                // for fragment view
-                directionFragment.show(fragmentManager, "Direction Fragment");
-                showLog("Exiting directionChangeImageBtn");
-            }
-        });
+        ArrayAdapter<String> adapter = new ArrayAdapter<String> (this, android.R.layout.simple_spinner_item, direction);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        directionDropdown.setAdapter(adapter);
+        directionDropdown.setOnItemSelectedListener(this);
 
         // when explored button clicked
         exploredImageBtn.setOnClickListener(new View.OnClickListener() {
@@ -548,11 +538,42 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         });
     }
 
+
+    @Override
+    public void onItemSelected(AdapterView<?> arg0, View arg1, int position,long id) {
+        editor.putString("direction", direction[position]);
+        refreshDirection(direction[position]);
+        editor.commit();
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> arg0) {
+    }
+
     // for refreshing all the label in the screen
     private void refreshLabel() {
         xAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[0]));
         yAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[1]));
-        directionAxisTextView.setText(sharedPreferences.getString("direction", ""));
+
+        String d = sharedPreferences.getString("direction", "");
+        switch (d) {
+            case "None":
+                directionDropdown.setSelection(0);
+                break;
+            case "up":
+                directionDropdown.setSelection(1);
+                break;
+            case "down":
+                directionDropdown.setSelection(2);
+                break;
+                case "left":
+                directionDropdown.setSelection(3);
+                    break;
+                case "right":
+                directionDropdown.setSelection(4);
+        }
+
     }
 
     // for refreshing the message sent and received after a certain time
@@ -561,16 +582,24 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         messageReceivedTextView.setText(sharedPreferences.getString("receivedText", ""));
         //messageSentTextView.setText(sharedPreferences.getString("sentText", ""));
         messageSentTextView.setText(sharedPreferences.getString("arrow", ""));
-        directionAxisTextView.setText(sharedPreferences.getString("direction", ""));
         connStatusTextView.setText(sharedPreferences.getString("connStatus", ""));
-        // send a request for update map every 1 second
-        /*
-        if (autoUpdate && BluetoothConnectionService.BluetoothConnectionStatus == true) {
-            String message = "XS";
-            byte[] bytes = message.getBytes(Charset.defaultCharset());
-            BluetoothConnectionService.write(bytes);
+        String d = sharedPreferences.getString("direction", "");
+        switch (d) {
+            case "None":
+                directionDropdown.setSelection(0);
+                break;
+            case "up":
+                directionDropdown.setSelection(1);
+                break;
+            case "down":
+                directionDropdown.setSelection(2);
+                break;
+            case "left":
+                directionDropdown.setSelection(3);
+                break;
+            case "right":
+                directionDropdown.setSelection(4);
         }
-        */
     }
 
     // for refreshing the direction of the robot
@@ -772,6 +801,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             String message = intent.getStringExtra("receivedMessage");
             showLog("receivedMessage: message --- " + message);
             try {
+                // 0 1 g r i d 6 7 8 9 10 11
                 if (message.length() > 7 && message.substring(2, 6).equals("grid")) {
                     String resultString = "";
                     String amdString = message.substring(11, message.length() - 2);

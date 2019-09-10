@@ -308,30 +308,6 @@
         app:layout_constraintStart_toEndOf="@+id/yLabelTextView"
         app:layout_constraintTop_toBottomOf="@+id/setStartPointToggleBtn" />
 
-    <TextView
-        android:id="@+id/directionAxisTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_marginStart="8dp"
-        android:text="None"
-        android:textAlignment="center"
-        android:textColor="@color/colorRed"
-        android:textSize="24sp"
-        app:layout_constraintStart_toEndOf="@+id/directionLabelTextView"
-        app:layout_constraintTop_toBottomOf="@+id/setStartPointToggleBtn" />
-
-    <ImageButton
-        android:id="@+id/directionChangeImageBtn"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginStart="50dp"
-        app:layout_constraintEnd_toStartOf="@+id/obstacleImageBtn"
-        app:layout_constraintHorizontal_bias="0.60"
-        app:layout_constraintStart_toEndOf="@+id/directionLabelTextView"
-        app:layout_constraintTop_toBottomOf="@+id/setStartPointToggleBtn"
-        app:srcCompat="@drawable/ic_change" />
-
     <ImageButton
         android:id="@+id/exploredImageBtn"
         android:layout_width="40dp"
@@ -424,5 +400,14 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Spinner android:id="@+id/spinner1"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:drawSelectorOnTop="true"
+        app:layout_constraintStart_toEndOf="@+id/directionLabelTextView"
+        app:layout_constraintTop_toBottomOf="@+id/setStartPointToggleBtn"
+        />
+
 
 </android.support.constraint.ConstraintLayout>

@@ -4,7 +4,7 @@
 
     <!-- View background color -->
     <solid
-        android:color="@color/colorAccent" >
+        android:color="@color/colorBlack" >
     </solid>
 
 
@@ -20,3 +20,4 @@
     </corners>
     -->
 </shape>
+
