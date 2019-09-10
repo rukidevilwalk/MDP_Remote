@@ -179,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         exploredImageBtn = findViewById(R.id.exploredImageBtn);
         obstacleImageBtn = findViewById(R.id.obstacleImageBtn);
         clearImageBtn = findViewById(R.id.clearImageBtn);
-        messageSentTextView = findViewById(R.id.messageSentTextView);
+        messageSentTextView = findViewById(R.id.imagesTextView);
         messageReceivedTextView = findViewById(R.id.messageReceivedTextView);
         manualAutoToggleBtn = findViewById(R.id.manualAutoToggleBtn);
 
@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         // clearing text messages in shared preferences
         editor.putString("sentText", "");
         editor.putString("receivedText", "");
-        editor.putString("arrow", "");
+        editor.putString("image", "");
         editor.putString("direction", "None");
         editor.putString("connStatus", connStatus);
         editor.commit();
@@ -289,18 +289,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             public void onClick(View view) {
                 showLog("Clicked moveForwardImageBtn");
                 if (gridMap.getAutoUpdate())
-                    updateStatus("Please press 'MANUAL'");
+                    updateStatus("SET TO MANUAL MODE FIRST");
                 else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
                     gridMap.moveRobot("forward");
                     refreshLabel();
                     if (gridMap.getValidPosition())
-                        updateStatus("moving forward");
+                        updateStatus("MOVE: FORWARD");
                     else
-                        updateStatus("Unable to move forward");
+                        updateStatus("MOVE: FORWARD IS BLOCKED");
                    // printMessage("AW1|");
                     printMessage("Arduinoforward");
                 } else
-                    updateStatus("Please press 'STARTING POINT'");
+                    updateStatus("SET STARTING POINT FIRST");
                 showLog("Exiting moveForwardImageBtn");
             }
         });
@@ -311,15 +311,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             public void onClick(View view) {
                 showLog("Clicked turnRightImageBtn");
                 if (gridMap.getAutoUpdate())
-                    updateStatus("Please press 'MANUAL'");
+                    updateStatus("SET TO MANUAL MODE FIRST'");
                 else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
                     gridMap.moveRobot("right");
                     refreshLabel();
-                    updateStatus("turning right");
+                    updateStatus("TURN RIGHT");
                     //printMessage("AD1|");
                     printMessage("Arduinoright");
                 } else
-                    updateStatus("Please press 'STARTING POINT'");
+                    updateStatus("SET STARTING POINT FIRST");
                 showLog("Exiting turnRightImageBtn");
             }
         });
@@ -330,18 +330,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             public void onClick(View view) {
                 showLog("Clicked moveBackwardImageBtn");
                 if (gridMap.getAutoUpdate())
-                    updateStatus("Please press 'MANUAL'");
+                    updateStatus("SET TO MANUAL MODE FIRST'");
                 else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
                     gridMap.moveRobot("back");
                     refreshLabel();
                     if (gridMap.getValidPosition())
-                        updateStatus("moving backward");
+                        updateStatus("MOVE: REVERSE");
                     else
-                        updateStatus("Unable to move backward");
+                        updateStatus("MOVE: REVERSE IS BLOCKED");
                     //printMessage("AS1|");
                     printMessage("Arduinoback");
                 } else
-                    updateStatus("Please press 'STARTING POINT'");
+                    updateStatus("SET STARTING POINT FIRST");
                 showLog("Exiting moveBackwardImageBtn");
             }
         });
@@ -352,15 +352,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             public void onClick(View view) {
                 showLog("Clicked turnLeftImageBtn");
                 if (gridMap.getAutoUpdate())
-                    updateStatus("Please press 'MANUAL'");
+                    updateStatus("SET TO MANUAL MODE FIRST");
                 else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
                     gridMap.moveRobot("left");
                     refreshLabel();
-                    updateStatus("turning left");
+                    updateStatus("TURN: LEFT");
                    // printMessage("AA1|");
                     printMessage("Arduinoleft");
                 } else
-                    updateStatus("Please press 'STARTING POINT'");
+                    updateStatus("SET STARTING POINT FIRST");
                 showLog("Exiting turnLeftImageBtn");
             }
         });
@@ -375,7 +375,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     compoundButton.setText("TILT OFF");
                 }
                 if (gridMap.getAutoUpdate()) {
-                    updateStatus("Please press 'MANUAL'");
+                    updateStatus("SET TO MANUAL MODE FIRST");
                     phoneTiltSwitch.setChecked(false);
                 } else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
                     if (phoneTiltSwitch.isChecked()) {
@@ -399,7 +399,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         sensorHandler.removeCallbacks(sensorDelay);
                     }
                 } else {
-                    updateStatus("Please press 'STARTING POINT'");
+                    updateStatus("SET STARTING POINT FIRST");
                     phoneTiltSwitch.setChecked(false);
                 }
             }
@@ -410,7 +410,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onClick(View view) {
                 showLog("Clicked resetMapBtn");
-                showToast("Reseting map...");
+                showToast("Resetting map...");
                 gridMap.resetMap();
             }
         });
@@ -661,7 +661,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         // get received text from main activity
         messageReceivedTextView.setText(sharedPreferences.getString("receivedText", ""));
         //messageSentTextView.setText(sharedPreferences.getString("sentText", ""));
-        messageSentTextView.setText(sharedPreferences.getString("arrow", ""));
+        messageSentTextView.setText(sharedPreferences.getString("image", ""));
         connStatusTextView.setText(sharedPreferences.getString("connStatus", ""));
         setDirectionDropdown();
     }

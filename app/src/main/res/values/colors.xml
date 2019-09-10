@@ -2,11 +2,21 @@
 <resources>
     <color name="colorPrimary">#000000</color>
     <color name="colorPrimaryDark">#000000</color>
-    <color name="colorAccent">#03A9F4</color>
+    <color name="colorAccent">#D4AF37</color>
 
     <color name="border_color">#000000</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorRed">#FF0000</color>
     <color name="colorBlack">#000000</color>
-    <color name="colorPink"> #FFB6C1</color>
+    <color name="beige">#FFE4CF</color>
+    <color name="brown">#CCAEA5</color>
+    <color name="darkBrown">#85432E</color>
+    <color name="peach">#FF9F82</color>
+
+    <color name="blue">#C2E8FF</color>
+    <color name="lightBlue">#DBF1FF</color>
+    <color name="milkBeige">#FFE5C2</color>
+    <color name="greyBlue">#769BB3</color>
+    <color name="choco">#B39264</color>
+
 </resources>
