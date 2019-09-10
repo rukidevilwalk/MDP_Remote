@@ -60,7 +60,7 @@ public class GridMap extends View {
     private static boolean unSetCellStatus = false;     // false: cannot unset cell, true: can unset cell
     private static boolean setExploredStatus = false;   // false: cannot check cell, true: can check cell
     private static boolean validPosition = false;       // false: robot out of range, true: robot within range
-    private Bitmap arrowBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_error);   // default image for bitmap
+    private Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_error);   // default image for bitmap
 
     private Paint blackPaint = new Paint();         // for lines, etc
     private Paint obstacleColor = new Paint();      // black = obstacles position
@@ -111,7 +111,8 @@ public class GridMap extends View {
     // draw the custom view grid map
     @Override
     protected void onDraw(Canvas canvas) {
-        showLog("Entering onDraw");
+        showLog("Creating map");
+
         super.onDraw(canvas);
         showLog("Redrawing map");
 
@@ -121,7 +122,7 @@ public class GridMap extends View {
 
         // if map not drawn
         if (!this.getMapDrawn()) {
-            canvas.drawColor(Color.parseColor("#D4AF37"));
+            canvas.drawColor(Color.parseColor("#FFB6C1"));
             // create dummy for arrow coordinate (not sure why)
             String[] dummyArrowCoord = new String[3];
             dummyArrowCoord[0] = "1";
@@ -143,14 +144,13 @@ public class GridMap extends View {
         if (this.getCanDrawRobot())
             this.drawRobot(canvas, curCoord);
         // draw arrow position
-        this.drawArrow(canvas, arrowCoord);
+        this.drawImages(canvas, arrowCoord);
 
-        showLog("Exiting onDraw");
     }
 
     // intialise cell
     private void createCell() {
-        showLog("Entering cellCreate");
+        showLog("Creating Cell");
         cells = new Cell[COL + 1][ROW + 1];
         this.calculateDimension();
         cellSize = this.getCellSize();
@@ -158,7 +158,6 @@ public class GridMap extends View {
         for (int x = 0; x <= COL; x++)
             for (int y = 0; y <= ROW; y++)
                 cells[x][y] = new Cell(x * cellSize + (cellSize / 30), y * cellSize + (cellSize / 30), (x + 1) * cellSize, (y + 1) * cellSize, unexploredColor, "unexplored");
-        showLog("Exiting createCell");
     }
 
     // set auto update
@@ -297,24 +296,24 @@ public class GridMap extends View {
         // for updating the x-axis, y-axis and direction axis (for auto mode)
         TextView xAxisTextView = ((Activity) this.getContext()).findViewById(R.id.xAxisTextView);
         TextView yAxisTextView = ((Activity) this.getContext()).findViewById(R.id.yAxisTextView);
-Spinner directionDropdown = ((Activity) this.getContext()).findViewById(R.id.spinner1);
-switch (direction){
-    case "None":
-        directionDropdown.setSelection(0);
-        break;
-    case "up":
-        directionDropdown.setSelection(1);
-        break;
-    case "down":
-        directionDropdown.setSelection(2);
-        break;
-    case "left":
-        directionDropdown.setSelection(3);
-        break;
-    case "right":
-        directionDropdown.setSelection(4);
-        break;
-}
+        Spinner directionDropdown = ((Activity) this.getContext()).findViewById(R.id.spinner1);
+        switch (direction){
+            case "None":
+                directionDropdown.setSelection(0);
+                break;
+            case "up":
+                directionDropdown.setSelection(1);
+                break;
+            case "down":
+                directionDropdown.setSelection(2);
+                break;
+            case "left":
+                directionDropdown.setSelection(3);
+                break;
+            case "right":
+                directionDropdown.setSelection(4);
+                break;
+        }
         xAxisTextView.setText(String.valueOf(col));
         yAxisTextView.setText(String.valueOf(row));
 
@@ -660,36 +659,69 @@ switch (direction){
     }
 
     // draw the arrow images on the respective coordinate
-    private void drawArrow(Canvas canvas, ArrayList<String[]> arrowCoord) {
-        showLog("Entering drawArrow");
+    private void drawImages(Canvas canvas, ArrayList<String[]> imageCoord) {
+        showLog("Drawing images");
         // RectF holds four float coordinates for a rectangle (left, top, right, bottom)
         RectF rect;
 
-        for (int i = 0; i < arrowCoord.size(); i++) {
-            if (!arrowCoord.get(i)[2].equals("dummy")) {
+        for (int i = 0; i < imageCoord.size(); i++) {
+            if (!imageCoord.get(i)[2].equals("dummy")) {
                 // convert to android coordinate
-                int col = Integer.parseInt(arrowCoord.get(i)[0]);
-                int row = convertRow(Integer.parseInt(arrowCoord.get(i)[1]));
+                int col = Integer.parseInt(imageCoord.get(i)[0]);
+                int row = convertRow(Integer.parseInt(imageCoord.get(i)[1]));
                 rect = new RectF(col * cellSize, row * cellSize, (col + 1) * cellSize, (row + 1) * cellSize);
-                switch (arrowCoord.get(i)[2]) {
+                switch (imageCoord.get(i)[2]) {
+                    case "1":
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_up);
+                        break;
+                    case "2":
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_up);
+                        break;
+                    case "3":
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_up);
+                        break;
+                    case "4":
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_up);
+                        break;
+                    case "5":
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_up);
+                        break;
+                    case "A":
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_up);
+                        break;
+                    case "B":
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_up);
+                        break;
+                    case "C":
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_up);
+                        break;
+                    case "D":
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_up);
+                        break;
+                    case "E":
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_up);
+                        break;
+                    case "circle":
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_up);
+                        break;
                     case "up":
-                        arrowBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_up);
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_up);
                         break;
                     case "right":
-                        arrowBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_right);
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_right);
                         break;
                     case "down":
-                        arrowBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_down);
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_down);
                         break;
                     case "left":
-                        arrowBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_left);
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_left);
                         break;
                     default:
                         break;
                 }
-                canvas.drawBitmap(arrowBitmap, null, rect, null);
+                canvas.drawBitmap(imageBitmap, null, rect, null);
             }
-            showLog("Exiting drawArrow");
+
         }
     }
 
@@ -1239,7 +1271,7 @@ switch (direction){
         mapDrawn = false;           // set map drawn to false
         canDrawRobot = false;       // set can draw robot to false
         validPosition = false;      // set valid position to false
-        Bitmap arrowBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_error);   // default image for bitmap
+        //Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_error);   // default image for bitmap
 
         showLog("Exiting resetMap");
         this.invalidate();

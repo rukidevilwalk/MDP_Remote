@@ -51,18 +51,20 @@ import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener, AdapterView.OnItemSelectedListener{
     private static final String TAG = "MainActivity";
-    // for transfering of information between activities
+
+    // for transferring of information between activities
     private static SharedPreferences sharedPreferences;
     private static SharedPreferences.Editor editor;
     private static Context context;
     private static boolean autoUpdate = false;
 
-    // declaraction of variable
+    // declaration of variable
     private static long exploreTimer;          // for exploration timer
     private static long fastestTimer;          // for fastest timer
     private static boolean startActivityStatus = true;  // to indicate whether an intent should be started
     public String connStatus = "None";
     String[] direction = { "None","up","down","left","right"};
+
     // for view by id
     GridMap gridMap;
     SendReceive sendReceive;
@@ -223,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     timerHandler.removeCallbacks(timerRunnableExplore);
                 } else if (exploreToggleBtn.getText().equals("STOP")) {
                     showToast("Exploration timer start!");
-                    printMessage("XE");
+                    printMessage("Explore");
                     exploreTimer = System.currentTimeMillis();
                     timerHandler.postDelayed(timerRunnableExplore, 0);
                 } else {
@@ -258,7 +260,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     timerHandler.removeCallbacks(timerRunnableFastest);
                 } else if (fastestToggleBtn.getText().equals("STOP")) {
                     showToast("Fastest timer start!");
-                    printMessage("XF");
+                    printMessage("Fastest");
                     fastestTimer = System.currentTimeMillis();
                     timerHandler.postDelayed(timerRunnableFastest, 0);
                 } else
@@ -295,7 +297,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         updateStatus("moving forward");
                     else
                         updateStatus("Unable to move forward");
-                    printMessage("AW1|");
+                   // printMessage("AW1|");
+                    printMessage("Arduinoforward");
                 } else
                     updateStatus("Please press 'STARTING POINT'");
                 showLog("Exiting moveForwardImageBtn");
@@ -313,14 +316,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     gridMap.moveRobot("right");
                     refreshLabel();
                     updateStatus("turning right");
-                    printMessage("AD1|");
+                    //printMessage("AD1|");
+                    printMessage("Arduinoright");
                 } else
                     updateStatus("Please press 'STARTING POINT'");
                 showLog("Exiting turnRightImageBtn");
             }
         });
 
-        // when move backaward image button clicked
+        // when move backward image button clicked
         moveBackwardImageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -334,7 +338,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         updateStatus("moving backward");
                     else
                         updateStatus("Unable to move backward");
-                    printMessage("AS1|");
+                    //printMessage("AS1|");
+                    printMessage("Arduinoback");
                 } else
                     updateStatus("Please press 'STARTING POINT'");
                 showLog("Exiting moveBackwardImageBtn");
@@ -352,7 +357,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     gridMap.moveRobot("left");
                     refreshLabel();
                     updateStatus("turning left");
-                    printMessage("AA1|");
+                   // printMessage("AA1|");
+                    printMessage("Arduinoleft");
                 } else
                     updateStatus("Please press 'STARTING POINT'");
                 showLog("Exiting turnLeftImageBtn");
@@ -538,135 +544,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         });
     }
 
-
-    @Override
-    public void onItemSelected(AdapterView<?> arg0, View arg1, int position,long id) {
-        editor.putString("direction", direction[position]);
-        refreshDirection(direction[position]);
-        editor.commit();
-
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> arg0) {
-    }
-
-    // for refreshing all the label in the screen
-    private void refreshLabel() {
-        xAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[0]));
-        yAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[1]));
-
-        String d = sharedPreferences.getString("direction", "");
-        switch (d) {
-            case "None":
-                directionDropdown.setSelection(0);
-                break;
-            case "up":
-                directionDropdown.setSelection(1);
-                break;
-            case "down":
-                directionDropdown.setSelection(2);
-                break;
-                case "left":
-                directionDropdown.setSelection(3);
-                    break;
-                case "right":
-                directionDropdown.setSelection(4);
-        }
-
-    }
-
-    // for refreshing the message sent and received after a certain time
-    public void refreshMessage() {
-        // get received text from main activity
-        messageReceivedTextView.setText(sharedPreferences.getString("receivedText", ""));
-        //messageSentTextView.setText(sharedPreferences.getString("sentText", ""));
-        messageSentTextView.setText(sharedPreferences.getString("arrow", ""));
-        connStatusTextView.setText(sharedPreferences.getString("connStatus", ""));
-        String d = sharedPreferences.getString("direction", "");
-        switch (d) {
-            case "None":
-                directionDropdown.setSelection(0);
-                break;
-            case "up":
-                directionDropdown.setSelection(1);
-                break;
-            case "down":
-                directionDropdown.setSelection(2);
-                break;
-            case "left":
-                directionDropdown.setSelection(3);
-                break;
-            case "right":
-                directionDropdown.setSelection(4);
-        }
-    }
-
-    // for refreshing the direction of the robot
-    public void refreshDirection(String direction) {
-        gridMap.setRobotDirection(direction);
-        printMessage("Direction is set to " + direction);
-    }
-
-    // for updating the displaying for robot status
-    private void updateStatus(String message) {
-        //robotStatusTextView.setText(message);
-    }
-
-    // print on message received
-    public static void receiveMessage(String message) {
-        showLog("Entering receiveMessage");
-        sharedPreferences();
-        editor.putString("receivedText", sharedPreferences.getString("receivedText", "") + "\n " + message);
-        editor.commit();
-        showLog("Exiting receiveMessage");
-    }
-
-    // print message on message sent
-    public static void printMessage(String name, int x, int y) throws JSONException {
-        showLog("Entering printMessage");
-        sharedPreferences();
-
-        JSONObject jsonObject = new JSONObject();
-        String message;
-
-        switch (name) {
-            case "starting":
-            case "waypoint":
-                jsonObject.put(name, name);
-                jsonObject.put("x", x);
-                jsonObject.put("y", y);
-                message = name + " (" + x + "," + y + ")";
-                break;
-            default:
-                message = "Unexpected default for printMessage: " + name;
-                break;
-        }
-        editor.putString("sentText", sharedPreferences.getString("sentText", "") + "\n " + message);
-        editor.commit();
-        printMessage("X" + String.valueOf(jsonObject));
-        /*
-        if (BluetoothConnectionService.BluetoothConnectionStatus == true) {
-            byte[] bytes = message.getBytes(Charset.defaultCharset());
-            BluetoothConnectionService.write(bytes);
-        }*/
-        showLog("Exiting printMessage");
-    }
-
-    public static void printMessage(String message) {
-        showLog("Entering printMessage");
-        sharedPreferences();
-
-        if (BluetoothConnectionService.BluetoothConnectionStatus == true) {
-            byte[] bytes = message.getBytes(Charset.defaultCharset());
-            BluetoothConnectionService.write(bytes);
-        }
-        showLog(message);
-        editor.putString("sentText", sharedPreferences.getString("sentText", "") + "\n " + message);
-        editor.commit();
-        showLog("Exiting printMessage");
-    }
-
+    // For creating dropdown menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -674,6 +552,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         return true;
     }
 
+    // For populating dropdown menu items
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         this.sharedPreferences();
@@ -732,6 +611,124 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             startActivity(intent);
         startActivityStatus = true;
         return super.onOptionsItemSelected(item);
+    }
+
+    // Direction dropdown listener for changing direction
+    @Override
+    public void onItemSelected(AdapterView<?> arg0, View arg1, int position,long id) {
+        editor.putString("direction", direction[position]);
+        refreshDirection(direction[position]);
+        editor.commit();
+
+    }
+
+    // Direction dropdown listener for no action
+    @Override
+    public void onNothingSelected(AdapterView<?> arg0) {
+    }
+
+    // For setting the direction dropdown box value based on sharedPreferences
+    private void setDirectionDropdown(){
+        String d = sharedPreferences.getString("direction", "");
+        switch (d) {
+            case "None":
+                directionDropdown.setSelection(0);
+                break;
+            case "up":
+                directionDropdown.setSelection(1);
+                break;
+            case "down":
+                directionDropdown.setSelection(2);
+                break;
+            case "left":
+                directionDropdown.setSelection(3);
+                break;
+            case "right":
+                directionDropdown.setSelection(4);
+                break;
+        }
+    }
+    // for refreshing all the label in the screen
+    private void refreshLabel() {
+        xAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[0]));
+        yAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[1]));
+        setDirectionDropdown();
+
+    }
+
+    // for refreshing the message sent and received after a certain time
+    public void refreshMessage() {
+        // get received text from main activity
+        messageReceivedTextView.setText(sharedPreferences.getString("receivedText", ""));
+        //messageSentTextView.setText(sharedPreferences.getString("sentText", ""));
+        messageSentTextView.setText(sharedPreferences.getString("arrow", ""));
+        connStatusTextView.setText(sharedPreferences.getString("connStatus", ""));
+        setDirectionDropdown();
+    }
+
+    // for refreshing the direction of the robot
+    public void refreshDirection(String direction) {
+        gridMap.setRobotDirection(direction);
+        printMessage("Direction is set to " + direction);
+    }
+
+    // for updating the displaying for robot status
+    private void updateStatus(String message) {
+        robotStatusTextView.setText(message);
+    }
+
+    // print on message received
+    public static void receiveMessage(String message) {
+        showLog("Entering receiveMessage");
+        sharedPreferences();
+        editor.putString("receivedText", sharedPreferences.getString("receivedText", "") + "\n " + message);
+        editor.commit();
+        showLog("Exiting receiveMessage");
+    }
+
+    // print message on message sent
+    public static void printMessage(String name, int x, int y) throws JSONException {
+        showLog("Entering printMessage");
+        sharedPreferences();
+
+        JSONObject jsonObject = new JSONObject();
+        String message;
+
+        switch (name) {
+            case "starting":
+            case "waypoint":
+                jsonObject.put(name, name);
+                jsonObject.put("x", x);
+                jsonObject.put("y", y);
+                message = name + " (" + x + "," + y + ")";
+                break;
+            default:
+                message = "Unexpected default for printMessage: " + name;
+                break;
+        }
+        editor.putString("sentText", sharedPreferences.getString("sentText", "") + "\n " + message);
+        editor.commit();
+        printMessage("X" + String.valueOf(jsonObject));
+        /*
+        if (BluetoothConnectionService.BluetoothConnectionStatus == true) {
+            byte[] bytes = message.getBytes(Charset.defaultCharset());
+            BluetoothConnectionService.write(bytes);
+        }*/
+        showLog("Exiting printMessage");
+    }
+
+    public static void printMessage(String message) {
+        showLog("Entering printMessage");
+        sharedPreferences();
+
+        if (BluetoothConnectionService.BluetoothConnectionStatus == true) {
+            byte[] bytes = message.getBytes(Charset.defaultCharset());
+            BluetoothConnectionService.write(bytes);
+        }
+        showLog(message);
+        editor.putString("sentText", sharedPreferences.getString("sentText", "") + "\n " + message);
+        editor.commit();
+        showLog("Exiting printMessage");
     }
 
     // for activating sharedPreferences
@@ -868,6 +865,67 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
+    // Accelerometer tilt function
+    Handler sensorHandler = new Handler();
+    boolean sensorFlag = false;
+
+    private final Runnable sensorDelay = new Runnable() {
+        @Override
+        public void run() {
+            //sets flag to true to execute the codes in onSensorChanged.
+            sensorFlag = true;
+            //calls sensorDelay again to execute 1 seconds later
+            sensorHandler.postDelayed(this, 1000); //1 seconds
+        }
+    };
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        float x = event.values[0];
+        float y = event.values[1];
+        float z = event.values[2];
+        showLog("SensorChanged X: " + x);
+        showLog("SensorChanged Y: " + y);
+        showLog("SensorChanged Z: " + z);
+
+        if (sensorFlag) {
+            //x,y,z values are based on how easy it is to move the wrist for e.g. tilting device forward is easier so y<-2
+            if (y < -2) {
+                //move forward
+                showLog("Sensor Move Forward Detected");
+                gridMap.moveRobot("forward");
+                refreshLabel();
+                printMessage("AW1|");
+            } else if (y > 2) {
+                //move backward
+                showLog("Sensor Move Backward Detected");
+                gridMap.moveRobot("back");
+                refreshLabel();
+                printMessage("AS1|");
+
+            } else if (x > 2) {
+                //move left
+                showLog("Sensor Move Left Detected");
+                gridMap.moveRobot("left");
+                refreshLabel();
+                printMessage("AA1|");
+
+            } else if (x < -2) {
+                //move right
+                showLog("Sensor Move Right Detected");
+                gridMap.moveRobot("right");
+                refreshLabel();
+                printMessage("AD1|");
+            }
+        }
+        //set flag back to false so that it wont execute the code above until 1-2 seconds later
+        sensorFlag = false;
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -915,65 +973,4 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         showLog("Exiting onSaveInstanceState");
     }
 
-    //ACCELEROMETER SENSOR
-    Handler sensorHandler = new Handler();
-    boolean sensorFlag = false;
-
-    private final Runnable sensorDelay = new Runnable() {
-        @Override
-        public void run() {
-            //sets flag to true to execute the codes in onSensorChanged.
-            sensorFlag = true;
-            //calls sensorDelay again to execute 1 seconds later
-            sensorHandler.postDelayed(this, 1000); //1 seconds
-        }
-    };
-
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        float x = event.values[0];
-        float y = event.values[1];
-        float z = event.values[2];
-        showLog("SensorChanged X: " + x);
-        showLog("SensorChanged Y: " + y);
-        showLog("SensorChanged Z: " + z);
-
-        if (sensorFlag) {
-            //x,y,z values are based on how easy it is to move the wrist for e.g. tilting device forward is easier so y<-2
-            if (y < -2) {
-                //move forward
-                showLog("Sensor Move Forward Detected");
-                gridMap.moveRobot("forward");
-                refreshLabel();
-                printMessage("AW1|");
-            } else if (y > 2) {
-                //move backward
-                showLog("Sensor Move Backward Detected");
-                gridMap.moveRobot("back");
-                refreshLabel();
-                printMessage("AS1|");
-
-            } else if (x > 2) {
-                //move left
-                showLog("Sensor Move Left Detected");
-                gridMap.moveRobot("left");
-                refreshLabel();
-                printMessage("AA1|");
-
-            } else if (x < -2) {
-                //move right
-                showLog("Sensor Move Right Detected");
-                gridMap.moveRobot("right");
-                refreshLabel();
-                printMessage("AD1|");
-            }
-        }
-        //set flag back to false so that it wont execute the code above until 1-2 seconds later
-        sensorFlag = false;
-    }
-
-    //must declare this method or will have error. not using this method so its blank
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int i) {
-    }
 }
