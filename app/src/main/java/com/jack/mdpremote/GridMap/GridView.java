@@ -21,9 +21,6 @@ import org.json.JSONObject;
 import java.math.BigInteger;
 import java.util.ArrayList;
 
-/**
- * Created by Thad on 21/1/2019.
- */
 
 public class GridView extends View {
 

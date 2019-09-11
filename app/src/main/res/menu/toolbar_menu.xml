@@ -9,7 +9,7 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/messageMenuItem"
+        android:id="@+id/sendReceiveMenuItem"
         android:icon="@drawable/ic_message"
         android:title="Send/Receive"
         app:showAsAction="never" />

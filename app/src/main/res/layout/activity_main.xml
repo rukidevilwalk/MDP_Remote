@@ -142,7 +142,7 @@
 
     <TextView
         android:id="@+id/robotStatusTitleTextView"
-        android:layout_width="140dp"
+        android:layout_width="160dp"
         android:layout_height="25dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
@@ -158,7 +158,7 @@
 
     <TextView
         android:id="@+id/robotStatusTextView"
-        android:layout_width="140dp"
+        android:layout_width="160dp"
         android:layout_height="50dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
@@ -357,7 +357,7 @@
         />
 
 
-    <ImageButton
+    <Button
         android:id="@+id/exploredImageBtn"
         android:layout_width="40dp"
         android:layout_height="40dp"
@@ -366,9 +366,11 @@
         android:background="@color/lightBlue"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/xAxisTextView"
-        app:srcCompat="@drawable/ic_check" />
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:text="E"/>
 
-    <ImageButton
+    <Button
         android:id="@+id/obstacleImageBtn"
         android:layout_width="40dp"
         android:layout_height="40dp"
@@ -377,18 +379,22 @@
         android:background="@color/lightBlue"
         app:layout_constraintStart_toEndOf="@+id/exploredImageBtn"
         app:layout_constraintTop_toBottomOf="@+id/directionLabelTextView"
-        app:srcCompat="@drawable/ic_arrow_error" />
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:text="O" />
 
-    <ImageButton
+    <Button
         android:id="@+id/clearImageBtn"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:text="UE"
         android:background="@color/lightBlue"
         app:layout_constraintStart_toEndOf="@+id/obstacleImageBtn"
-        app:layout_constraintTop_toBottomOf="@+id/yAxisTextView"
-        app:srcCompat="@drawable/ic_clear" />
+        app:layout_constraintTop_toBottomOf="@+id/yAxisTextView" />
 
     <TextView
         android:id="@+id/imagesTitleTextView"
@@ -407,7 +413,6 @@
         android:id="@+id/messageReceivedTitleTextView"
         android:layout_width="292dp"
         android:layout_height="25dp"
-        android:layout_marginEnd="8dp"
         android:background="@drawable/border_black_background"
         android:text="@string/message_received"
         android:textAlignment="center"
@@ -425,6 +430,7 @@
         android:layout_marginEnd="8dp"
         android:gravity="bottom"
         android:scrollbars="vertical"
+        android:maxLines = "7"
         android:textSize="11sp"
         app:layout_constraintEnd_toEndOf="@+id/imagesTitleTextView"
         app:layout_constraintStart_toStartOf="parent"
@@ -437,6 +443,7 @@
         android:layout_marginStart="8dp"
         android:gravity="bottom"
         android:scrollbars="vertical"
+        android:maxLines = "7"
         android:textSize="11sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -444,9 +451,9 @@
 
     <ToggleButton
         android:id="@+id/manualAutoToggleBtn"
-        android:layout_width="150dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="30dp"
         android:background="@color/choco"
         android:textAlignment="center"
@@ -455,8 +462,24 @@
         android:textOn="MANUAL"
         android:textSize="18sp"
         android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/spinner1"
+        app:layout_constraintTop_toBottomOf="@+id/moveBackwardImageBtn" />
+
+    <Button
+        android:id="@+id/manualUpdateBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="10dp"
+        android:background="@color/choco"
+        android:textAlignment="center"
+        android:textColor="@drawable/disable_btn_color"
+        android:text="UPDATE"
+        android:textSize="18sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/phoneTiltSwitch"
+        app:layout_constraintStart_toEndOf="@+id/manualAutoToggleBtn"
         app:layout_constraintTop_toBottomOf="@+id/moveBackwardImageBtn" />
 
 </android.support.constraint.ConstraintLayout>

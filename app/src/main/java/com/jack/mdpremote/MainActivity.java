@@ -48,7 +48,7 @@ import org.json.JSONObject;
 import java.nio.charset.Charset;
 import java.util.UUID;
 
-public class MainActivity extends AppCompatActivity implements SensorEventListener, AdapterView.OnItemSelectedListener{
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener , SensorEventListener{
     private static final String TAG = "MainActivity";
 
     // for transferring of information between activities
@@ -68,21 +68,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     GridMap gridMap;
     SendReceive sendReceive;
     TextView connStatusTextView;
-    MenuItem bluetoothMenuItem, messageMenuItem, getMapMenuItem;
+    MenuItem bluetoothMenuItem, sendReceiveMenuItem, getMapMenuItem;
     TextView exploreTimeTextView, fastestTimeTextView;
     ToggleButton exploreToggleBtn, fastestToggleBtn;
     ImageButton exploreResetImageBtn, fastestResetImageBtn;
     TextView robotStatusTextView;
     ImageButton moveForwardImageBtn, turnRightImageBtn, moveBackwardImageBtn, turnLeftImageBtn;
     Switch phoneTiltSwitch;
-    Button resetMapBtn;
+    Button resetMapBtn ;
     ToggleButton setStartPointToggleBtn, setWaypointToggleBtn;
     TextView xAxisTextView, yAxisTextView;
-    ImageButton exploredImageBtn, obstacleImageBtn, clearImageBtn;
+    Button exploredImageBtn, obstacleImageBtn, clearImageBtn;
     Spinner directionDropdown;
     static TextView messageSentTextView;
     TextView messageReceivedTextView;
     ToggleButton manualAutoToggleBtn;
+    Button manualUpdateBtn;
 
     Intent intent;
 
@@ -151,36 +152,44 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         exploreTimer = 0;
         fastestTimer = 0;
 
-        // find all view by id
+        // View ID Initialization
         gridMap = findViewById(R.id.mapView);
-        connStatusTextView = findViewById(R.id.connStatusTextView);
-        bluetoothMenuItem = findViewById(R.id.bluetoothMenuItem);
-        messageMenuItem = findViewById(R.id.messageMenuItem);
+        xAxisTextView = findViewById(R.id.xAxisTextView);
+        yAxisTextView = findViewById(R.id.yAxisTextView);
+        resetMapBtn = findViewById(R.id.resetMapBtn);
+        setStartPointToggleBtn = findViewById(R.id.setStartPointToggleBtn);
+        setWaypointToggleBtn = findViewById(R.id.setWaypointToggleBtn);
+        exploredImageBtn = findViewById(R.id.exploredImageBtn);
+        obstacleImageBtn = findViewById(R.id.obstacleImageBtn);
+        clearImageBtn = findViewById(R.id.clearImageBtn);
+        directionDropdown = findViewById(R.id.spinner1);
+
+        sendReceiveMenuItem = findViewById(R.id.sendReceiveMenuItem);
         getMapMenuItem = findViewById(R.id.getMapMenuItem);
-        exploreTimeTextView = findViewById(R.id.exploreTimeTextView);
+        bluetoothMenuItem = findViewById(R.id.bluetoothMenuItem);
+        connStatusTextView = findViewById(R.id.connStatusTextView);
+
         fastestTimeTextView = findViewById(R.id.fastestTimeTextView);
+        exploreTimeTextView = findViewById(R.id.exploreTimeTextView);
         exploreToggleBtn = findViewById(R.id.exploreToggleBtn);
         exploreResetImageBtn = findViewById(R.id.exploreResetImageBtn);
         fastestToggleBtn = findViewById(R.id.fastestToggleBtn);
         fastestResetImageBtn = findViewById(R.id.fastestResetImageBtn);
+
         robotStatusTextView = findViewById(R.id.robotStatusTextView);
+
         moveForwardImageBtn = findViewById(R.id.moveForwardImageBtn);
         turnRightImageBtn = findViewById(R.id.turnRightImageBtn);
         moveBackwardImageBtn = findViewById(R.id.moveBackwardImageBtn);
         turnLeftImageBtn = findViewById(R.id.turnLeftImageBtn);
+
         phoneTiltSwitch = findViewById(R.id.phoneTiltSwitch);
-        resetMapBtn = findViewById(R.id.resetMapBtn);
-        setStartPointToggleBtn = findViewById(R.id.setStartPointToggleBtn);
-        setWaypointToggleBtn = findViewById(R.id.setWaypointToggleBtn);
-        xAxisTextView = findViewById(R.id.xAxisTextView);
-        yAxisTextView = findViewById(R.id.yAxisTextView);
-        directionDropdown = findViewById(R.id.spinner1);
-        exploredImageBtn = findViewById(R.id.exploredImageBtn);
-        obstacleImageBtn = findViewById(R.id.obstacleImageBtn);
-        clearImageBtn = findViewById(R.id.clearImageBtn);
+
         messageSentTextView = findViewById(R.id.imagesTextView);
         messageReceivedTextView = findViewById(R.id.messageReceivedTextView);
+
         manualAutoToggleBtn = findViewById(R.id.manualAutoToggleBtn);
+        manualUpdateBtn = findViewById(R.id.manualUpdateBtn);
 
         MainActivity.context = getApplicationContext();
         this.sharedPreferences();
@@ -507,6 +516,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         gridMap.setAutoUpdate(true);
                         autoUpdate = true;
                         gridMap.toggleCheckedBtn("None");
+                        manualUpdateBtn.setEnabled(false);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -516,12 +526,26 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         gridMap.setAutoUpdate(false);
                         autoUpdate = false;
                         gridMap.toggleCheckedBtn("None");
+                        manualUpdateBtn.setEnabled(true);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                     showToast("MANUAL mode");
                 }
                 showLog("Exiting manualAutoToggleBtn");
+            }
+        });
+
+        // Reset Map button listener
+        manualUpdateBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    gridMap.updateMapInformation();
+                } catch (JSONException e){
+                    showLog("Manual update error" + e);
+                }
+
             }
         });
 
@@ -562,7 +586,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 startActivityStatus = false;
                 startActivityForResult(intent, 1);
                 break;
-            case R.id.messageMenuItem:
+            case R.id.sendReceiveMenuItem:
                 showToast("Message Box selected");
                 intent = new Intent(MainActivity.this, SendReceive.class);
                 editor.putString("receivedText", messageReceivedTextView.getText().toString());
@@ -775,21 +799,26 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     };
 
-    // for receiving from bluetooth
+    // Receiving message from RPI through bluetooth
     BroadcastReceiver messageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String message = intent.getStringExtra("receivedMessage");
             showLog("receivedMessage: message --- " + message);
             try {
+
+                // Receiving robot status message
            if (message.length() > 8 && message.substring(0, 8).equals("A:status")){
                String robotStatus = message.substring(8);
                updateStatus(robotStatus);
+
+               // Receiving map information message
            } else if (message.length() > 5 && message.substring(0, 5).equals("A:map")) {
                     //String resultString = "";
-                    String robotPosition = message.substring(5);
-               String robotDirection = message.substring(5);
-               String mapInfo = message.substring(5);
+                    String robotPositionX = message.substring(5,7);
+               String robotPositionY = message.substring(7,9);
+               String robotDirection = message.substring(9,10);
+               String mapInfo = message.substring(10);
                     //mapInfo = "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
                     showLog("mapInfo: " + mapInfo);
 //                    BigInteger hexBigIntegerExplored = new BigInteger(amdString, 16);
@@ -812,12 +841,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
                     JSONObject amdObject = new JSONObject();
                     amdObject.put("explored", mapInfo);
+               amdObject.put("robotX", robotPositionX);
+               amdObject.put("robotY", robotPositionY);
+               amdObject.put("robotDirection", robotDirection);
                     //amdObject.put("length", amdString.length() * 4);
                     //amdObject.put("obstacle", resultString);
                     JSONArray amdArray = new JSONArray();
                     amdArray.put(amdObject);
+
                     JSONObject amdMessage = new JSONObject();
                     amdMessage.put("map", amdArray);
+
                     message = String.valueOf(amdMessage);
                     showLog("Executed for AMD message, message: " + message);
                 }
@@ -833,14 +867,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 } catch (JSONException e) {
                     showLog("messageReceiver: try decode unsuccessful");
                 }
-            } else {
-              //Remove this part when testing done
+            }  else {
                 try {
                     gridMap.setReceivedJsonObject(new JSONObject(message));
-                    gridMap.updateMapInformation();
-                    showLog("messageReceiver: try decode successful");
+
                 } catch (JSONException e) {
-                    showLog("messageReceiver: try decode unsuccessful");
+                    showLog("Manual update error" + e);
                 }
             }
             sharedPreferences();

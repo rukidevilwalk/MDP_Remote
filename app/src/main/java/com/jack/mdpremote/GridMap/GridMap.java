@@ -14,7 +14,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ImageButton;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -791,12 +791,6 @@ public class GridMap extends View {
         return cellSize;
     }
 
-    // to refresh the grid map in auto mode
-//    public void refreshMap() {
-//        if (this.getAutoUpdate())
-//            postInvalidateDelayed(500);
-//    }
-
     // update map information on auto mode
     public void updateMapInformation() throws JSONException {
         showLog("Entering updateMapInformation");
@@ -804,25 +798,53 @@ public class GridMap extends View {
         JSONObject mapInformation = this.getReceivedJsonObject();
         showLog("updateMapInformation --- mapInformation: " + mapInformation);
 
-        JSONArray infoJsonArray;
-        JSONObject infoJsonObject;
-        String hexStringObstacle, exploredString, obstacleString;
-        BigInteger hexBigIntegerObstacle;
-        String message;
+        JSONArray mapInfoJsonArray;
+        JSONObject mapInfoJsonObject;
+        String message, exploredString;
+
 
         if (mapInformation == null)
             return;
 
-        // decoding the map information
         for (int i = 0; i < mapInformation.names().length(); i++) {
-            message = "updateMapInformation Default message";
-            switch (mapInformation.names().getString(i)) {
-                // if it contains map array
-                case "map":
-                    infoJsonArray = mapInformation.getJSONArray("map");
-                    infoJsonObject = infoJsonArray.getJSONObject(0);
 
-                    exploredString = infoJsonObject.getString("explored");
+            switch (mapInformation.names().getString(i)) {
+
+                // set map layout and robot position
+                case "map":
+                    mapInfoJsonArray = mapInformation.getJSONArray("map");
+                    mapInfoJsonObject = mapInfoJsonArray.getJSONObject(0);
+
+                    // Render new position of robot
+                    try {
+                        if (canDrawRobot)
+                            this.setOldRobotCoord(curCoord[0], curCoord[1]);
+                        String direction = mapInfoJsonObject.getString("robotDirection");
+                        switch (direction){
+                            case "0":
+                                direction = "up";
+                                break;
+                            case "1":
+                                direction = "down";
+                                break;
+                            case "2":
+                                direction = "right";
+                                break;
+                            case "3":
+                                direction = "left";
+                                break;
+                        }
+
+                        showLog("x: " + mapInfoJsonObject.getInt("robotX") + " y: " + mapInfoJsonObject.getInt("robotY"));
+                        //this.setStartCoord(mapInfoJsonObject.getInt("x"), mapInfoJsonObject.getInt("y"));
+                        this.setCurCoord(mapInfoJsonObject.getInt("robotX") + 1, mapInfoJsonObject.getInt("robotY") + 1, direction);
+                        canDrawRobot = true;
+                    } catch (JSONException e){
+                        e.printStackTrace();
+                    }
+
+                    // Render current map layout
+                    exploredString = mapInfoJsonObject.getString("explored");
                     exploredString = exploredString.replaceAll("0", "0000");
                     exploredString = exploredString.replaceAll("1", "0001");
                     exploredString = exploredString.replaceAll("2", "0010");
@@ -841,7 +863,7 @@ public class GridMap extends View {
                     exploredString = exploredString.replaceAll("F", "1111");
                     showLog("updateMapInformation.exploredString: " + exploredString + ", length: " + exploredString.length());
 
-                    // set explored and unexplored cells
+                    // set cells to explored, unexplored and obstacle
                     int x, y;
                     for (int j = 0; j < exploredString.length(); j+=2) {
                         // android coordinate
@@ -856,19 +878,17 @@ public class GridMap extends View {
                                 cells[x][y].setType("explored");
                             } else if ((String.valueOf(exploredString.charAt(j+1))).equals("1")){
                                 this.setObstacleCoord(x, 20-y);
-                                showLog("updateMapInformation.exploredString: ");
                             } else {
                                 cells[x][y].setType("unexplored");
                             }
-
 
                         }
 
                     }
 
-//                    int length = infoJsonObject.getInt("length");
+//                    int length = mapInfoJsonObject.getInt("length");
 //
-//                    hexStringObstacle = infoJsonObject.getString("obstacle");
+//                    hexStringObstacle = mapInfoJsonObject.getString("obstacle");
 //                    showLog("updateMapInformation hexStringObstacle: " + hexStringObstacle);
 //                    hexBigIntegerObstacle = new BigInteger(hexStringObstacle, 16);
 //                    showLog("updateMapInformation hexBigIntegerObstacle: " + hexBigIntegerObstacle);
@@ -888,69 +908,77 @@ public class GridMap extends View {
 //                                k++;
 //                            }
 
-                    // set waypoint cells if it exist
-                    int[] waypointCoord = this.getWaypointCoord();
-                    if (waypointCoord[0] >= 1 && waypointCoord[1] >= 1)
-                        cells[waypointCoord[0]][20 - waypointCoord[1]].setType("waypoint");
-                    break;
-                // if it contains robot array
-                case "robot":
-                    if (canDrawRobot)
-                        this.setOldRobotCoord(curCoord[0], curCoord[1]);
-                    infoJsonArray = mapInformation.getJSONArray("robot");
-                    infoJsonObject = infoJsonArray.getJSONObject(0);
 
-                    // remove old robot color
-                    for (int row = ROW - 1; row >= 0; row--)
-                        for (int col = 1; col <= COL; col++)
-                            cells[col][row].setType("unexplored");
+                    // set waypoint cells
+//                    int[] waypointCoord = this.getWaypointCoord();
+//                    if (waypointCoord[0] >= 1 && waypointCoord[1] >= 1)
+//                        cells[waypointCoord[0]][20 - waypointCoord[1]].setType("waypoint");
+                    break;
 
-                    this.setStartCoord(infoJsonObject.getInt("x"), infoJsonObject.getInt("y"));
-                    this.setCurCoord(infoJsonObject.getInt("x"), infoJsonObject.getInt("y"), infoJsonObject.getString("direction"));
-                    canDrawRobot = true;
-                    break;
                 // if it contains robot array
-                case "waypoint":
-                    infoJsonArray = mapInformation.getJSONArray("waypoint");
-                    infoJsonObject = infoJsonArray.getJSONObject(0);
-                    this.setWaypointCoord(infoJsonObject.getInt("x"), infoJsonObject.getInt("y"));
-                    setWaypointStatus = true;
-                    break;
+//                case "robot":
+//                    if (canDrawRobot)
+//                        this.setOldRobotCoord(curCoord[0], curCoord[1]);
+//                    mapInfoJsonArray = mapInformation.getJSONArray("robot");
+//                    mapInfoJsonObject = mapInfoJsonArray.getJSONObject(0);
+//
+//                    // remove old robot color
+//                    for (int row = ROW - 1; row >= 0; row--)
+//                        for (int col = 1; col <= COL; col++)
+//                            cells[col][row].setType("unexplored");
+//
+//                    //this.setStartCoord(mapInfoJsonObject.getInt("x"), mapInfoJsonObject.getInt("y"));
+//                    this.setCurCoord(mapInfoJsonObject.getInt("x"), mapInfoJsonObject.getInt("y"), mapInfoJsonObject.getString("direction"));
+//                    canDrawRobot = true;
+//                    break;
+
+                // set waypoint cells
+//                case "waypoint":
+//                    mapInfoJsonArray = mapInformation.getJSONArray("waypoint");
+//                    mapInfoJsonObject = mapInfoJsonArray.getJSONObject(0);
+//                    this.setWaypointCoord(mapInfoJsonObject.getInt("x"), mapInfoJsonObject.getInt("y"));
+//                    setWaypointStatus = true;
+//                    break;
+
                 // if it contains obstacle array
-                case "obstacle":
-                    infoJsonArray = mapInformation.getJSONArray("obstacle");
-                    for (int j = 0; j < infoJsonArray.length(); j++) {
-                        infoJsonObject = infoJsonArray.getJSONObject(j);
-                        this.setObstacleCoord(infoJsonObject.getInt("x"), infoJsonObject.getInt("y"));
-                    }
-                    message = "No. of Obstacle: " + String.valueOf(infoJsonArray.length());
-                    break;
+//                case "obstacle":
+//                    mapInfoJsonArray = mapInformation.getJSONArray("obstacle");
+//                    for (int j = 0; j < mapInfoJsonArray.length(); j++) {
+//                        mapInfoJsonObject = mapInfoJsonArray.getJSONObject(j);
+//                        this.setObstacleCoord(mapInfoJsonObject.getInt("x"), mapInfoJsonObject.getInt("y"));
+//                    }
+//
+//                    break;
+
                 // if it contains image array
                 case "image":
-                    infoJsonArray = mapInformation.getJSONArray("image");
-                    for (int j = 0; j < infoJsonArray.length(); j++) {
-                        infoJsonObject = infoJsonArray.getJSONObject(j);
-                        if (!infoJsonObject.getString("face").equals("dummy")) {
-                            this.setImageCoordinate(infoJsonObject.getInt("x"), infoJsonObject.getInt("y"), infoJsonObject.getString("face"));
-                            message = "Image:  (" + String.valueOf(infoJsonObject.getInt("x")) + "," + String.valueOf(infoJsonObject.getInt("y")) + "), face: " + infoJsonObject.getString("face");
+                    mapInfoJsonArray = mapInformation.getJSONArray("image");
+                    for (int j = 0; j < mapInfoJsonArray.length(); j++) {
+                        mapInfoJsonObject = mapInfoJsonArray.getJSONObject(j);
+                        if (!mapInfoJsonObject.getString("face").equals("dummy")) {
+                            this.setImageCoordinate(mapInfoJsonObject.getInt("x"), mapInfoJsonObject.getInt("y"), mapInfoJsonObject.getString("face"));
+                            message = "Image:  (" + String.valueOf(mapInfoJsonObject.getInt("x")) + "," + String.valueOf(mapInfoJsonObject.getInt("y")) + "), face: " + mapInfoJsonObject.getString("face");
                         }
                     }
                     break;
+
                 // if it contains move array
-                case "move":
-                    infoJsonArray = mapInformation.getJSONArray("move");
-                    infoJsonObject = infoJsonArray.getJSONObject(0);
-                    if (canDrawRobot)
-                        moveRobot(infoJsonObject.getString("direction"));
-                    message = "moveDirection: " + infoJsonObject.getString("direction");
-                    break;
-                // if it contains move array
-                case "status":
-                    infoJsonArray = mapInformation.getJSONArray("status");
-                    infoJsonObject = infoJsonArray.getJSONObject(0);
-                    printRobotStatus(infoJsonObject.getString("status"));
-                    message = "status: " + infoJsonObject.getString("status");
-                    break;
+//                case "move":
+//                    mapInfoJsonArray = mapInformation.getJSONArray("move");
+//                    mapInfoJsonObject = mapInfoJsonArray.getJSONObject(0);
+//                    if (canDrawRobot)
+//                        moveRobot(mapInfoJsonObject.getString("direction"));
+//                    message = "moveDirection: " + mapInfoJsonObject.getString("direction");
+//                    break;
+
+                // if it contains robot status
+//                case "status":
+//                    mapInfoJsonArray = mapInformation.getJSONArray("status");
+//                    mapInfoJsonObject = mapInfoJsonArray.getJSONObject(0);
+//                    printRobotStatus(mapInfoJsonObject.getString("status"));
+//                    message = "status: " + mapInfoJsonObject.getString("status");
+//                    break;
+
                 default:
                     message = "Unintended default for JSONObject";
                     break;
@@ -1082,9 +1110,9 @@ public class GridMap extends View {
     public void toggleCheckedBtn(String buttonName) {
         ToggleButton setStartPointToggleBtn = ((Activity) this.getContext()).findViewById(R.id.setStartPointToggleBtn);
         ToggleButton setWaypointToggleBtn = ((Activity) this.getContext()).findViewById(R.id.setWaypointToggleBtn);
-        ImageButton obstacleImageBtn = ((Activity) this.getContext()).findViewById(R.id.obstacleImageBtn);
-        ImageButton exploredImageBtn = ((Activity) this.getContext()).findViewById(R.id.exploredImageBtn);
-        ImageButton clearImageBtn = ((Activity) this.getContext()).findViewById(R.id.clearImageBtn);
+        Button obstacleImageBtn = ((Activity) this.getContext()).findViewById(R.id.obstacleImageBtn);
+        Button exploredImageBtn = ((Activity) this.getContext()).findViewById(R.id.exploredImageBtn);
+        Button clearImageBtn = ((Activity) this.getContext()).findViewById(R.id.clearImageBtn);
 
         if (!buttonName.equals("setStartPointToggleBtn"))
             if (setStartPointToggleBtn.isChecked()) {
