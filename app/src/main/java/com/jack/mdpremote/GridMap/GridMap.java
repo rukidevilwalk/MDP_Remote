@@ -148,7 +148,7 @@ public class GridMap extends View {
 
     }
 
-    // intialise cell
+    // initialise cell
     private void createCell() {
         showLog("Creating Cell");
         cells = new Cell[COL + 1][ROW + 1];
