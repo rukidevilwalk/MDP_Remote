@@ -45,7 +45,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.util.UUID;
 
@@ -133,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         @Override
         public void run() {
             refreshMessage();
-            timerHandler.postDelayed(timedMessage, 1000);
+            timerHandler.postDelayed(timedMessage, 500);
         }
     };
 
@@ -225,7 +224,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     timerHandler.removeCallbacks(timerRunnableExplore);
                 } else if (exploreToggleBtn.getText().equals("STOP")) {
                     showToast("Exploration timer start!");
-                    printMessage("Explore");
+                    sendMessage("Explore");
                     exploreTimer = System.currentTimeMillis();
                     timerHandler.postDelayed(timerRunnableExplore, 0);
                 } else {
@@ -260,7 +259,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     timerHandler.removeCallbacks(timerRunnableFastest);
                 } else if (fastestToggleBtn.getText().equals("STOP")) {
                     showToast("Fastest timer start!");
-                    printMessage("Fastest");
+                    sendMessage("Fastest");
                     fastestTimer = System.currentTimeMillis();
                     timerHandler.postDelayed(timerRunnableFastest, 0);
                 } else
@@ -297,8 +296,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         updateStatus("MOVE: FORWARD");
                     else
                         updateStatus("MOVE: FORWARD IS BLOCKED");
-                   // printMessage("AW1|");
-                    printMessage("Arduinoforward");
+                   // sendMessage("AW1|");
+                    sendMessage("Arduinoforward");
                 } else
                     updateStatus("SET STARTING POINT FIRST");
                 showLog("Exiting moveForwardImageBtn");
@@ -315,9 +314,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
                     gridMap.moveRobot("right");
                     refreshLabel();
-                    updateStatus("TURN RIGHT");
-                    //printMessage("AD1|");
-                    printMessage("Arduinoright");
+                    updateStatus("TURN: RIGHT");
+                    //sendMessage("AD1|");
+                    sendMessage("Arduinoright");
                 } else
                     updateStatus("SET STARTING POINT FIRST");
                 showLog("Exiting turnRightImageBtn");
@@ -338,8 +337,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         updateStatus("MOVE: REVERSE");
                     else
                         updateStatus("MOVE: REVERSE IS BLOCKED");
-                    //printMessage("AS1|");
-                    printMessage("Arduinoback");
+                    //sendMessage("AS1|");
+                    sendMessage("Arduinoback");
                 } else
                     updateStatus("SET STARTING POINT FIRST");
                 showLog("Exiting moveBackwardImageBtn");
@@ -357,8 +356,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     gridMap.moveRobot("left");
                     refreshLabel();
                     updateStatus("TURN: LEFT");
-                   // printMessage("AA1|");
-                    printMessage("Arduinoleft");
+                   // sendMessage("AA1|");
+                    sendMessage("Arduinoleft");
                 } else
                     updateStatus("SET STARTING POINT FIRST");
                 showLog("Exiting turnLeftImageBtn");
@@ -405,12 +404,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         });
 
-        // when reset map button clicked
+        // Reset Map button listener
         resetMapBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showLog("Clicked resetMapBtn");
-                showToast("Resetting map...");
                 gridMap.resetMap();
             }
         });
@@ -449,6 +446,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         });
 
+        // Direction dropdown box
         ArrayAdapter<String> adapter = new ArrayAdapter<String> (this, android.R.layout.simple_spinner_item, direction);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         directionDropdown.setAdapter(adapter);
@@ -669,7 +667,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     // for refreshing the direction of the robot
     public void refreshDirection(String direction) {
         gridMap.setRobotDirection(direction);
-        printMessage("Direction is set to " + direction);
+        sendMessage("Direction is set to " + direction);
     }
 
     // for updating the displaying for robot status
@@ -677,18 +675,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         robotStatusTextView.setText(message);
     }
 
-    // print on message received
-    public static void receiveMessage(String message) {
-        showLog("Entering receiveMessage");
-        sharedPreferences();
-        editor.putString("receivedText", sharedPreferences.getString("receivedText", "") + "\n " + message);
-        editor.commit();
-        showLog("Exiting receiveMessage");
-    }
-
     // print message on message sent
-    public static void printMessage(String name, int x, int y) throws JSONException {
-        showLog("Entering printMessage");
+    public static void sendMessage(String name, int x, int y) throws JSONException {
+        showLog("Entering sendMessage");
         sharedPreferences();
 
         JSONObject jsonObject = new JSONObject();
@@ -703,22 +692,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 message = name + " (" + x + "," + y + ")";
                 break;
             default:
-                message = "Unexpected default for printMessage: " + name;
+                message = "Unexpected default for sendMessage: " + name;
                 break;
         }
         editor.putString("sentText", sharedPreferences.getString("sentText", "") + "\n " + message);
         editor.commit();
-        printMessage("X" + String.valueOf(jsonObject));
-        /*
-        if (BluetoothConnectionService.BluetoothConnectionStatus == true) {
-            byte[] bytes = message.getBytes(Charset.defaultCharset());
-            BluetoothConnectionService.write(bytes);
-        }*/
-        showLog("Exiting printMessage");
+        sendMessage("X" + String.valueOf(jsonObject));
+        showLog("Exiting sendMessage");
     }
 
-    public static void printMessage(String message) {
-        showLog("Entering printMessage");
+    public static void sendMessage(String message) {
+        showLog("Entering sendMessage");
         sharedPreferences();
 
         if (BluetoothConnectionService.BluetoothConnectionStatus == true) {
@@ -728,7 +712,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         showLog(message);
         editor.putString("sentText", sharedPreferences.getString("sentText", "") + "\n " + message);
         editor.commit();
-        showLog("Exiting printMessage");
+        showLog("Exiting sendMessage");
     }
 
     // for activating sharedPreferences
@@ -798,33 +782,38 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             String message = intent.getStringExtra("receivedMessage");
             showLog("receivedMessage: message --- " + message);
             try {
-                // 0 1 g r i d 6 7 8 9 10 11
-                if (message.length() > 7 && message.substring(2, 6).equals("grid")) {
-                    String resultString = "";
-                    String amdString = message.substring(11, message.length() - 2);
-                    showLog("amdString: " + amdString);
-                    BigInteger hexBigIntegerExplored = new BigInteger(amdString, 16);
-                    String exploredString = hexBigIntegerExplored.toString(2);
-
-                    while (exploredString.length() < 300)
-                        exploredString = "0" + exploredString;
-
-                    for (int i = 0; i < exploredString.length(); i = i + 15) {
-                        int j = 0;
-                        String subString = "";
-                        while (j < 15) {
-                            subString = subString + exploredString.charAt(j + i);
-                            j++;
-                        }
-                        resultString = subString + resultString;
-                    }
-                    hexBigIntegerExplored = new BigInteger(resultString, 2);
-                    resultString = hexBigIntegerExplored.toString(16);
+           if (message.length() > 8 && message.substring(0, 8).equals("A:status")){
+               String robotStatus = message.substring(8);
+               updateStatus(robotStatus);
+           } else if (message.length() > 5 && message.substring(0, 5).equals("A:map")) {
+                    //String resultString = "";
+                    String robotPosition = message.substring(5);
+               String robotDirection = message.substring(5);
+               String mapInfo = message.substring(5);
+                    //mapInfo = "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+                    showLog("mapInfo: " + mapInfo);
+//                    BigInteger hexBigIntegerExplored = new BigInteger(amdString, 16);
+//                    String exploredString = hexBigIntegerExplored.toString(2);
+//
+//                    while (exploredString.length() < 300)
+//                        exploredString = "0" + exploredString;
+//
+//                    for (int i = 0; i < exploredString.length(); i = i + 15) {
+//                        int j = 0;
+//                        String subString = "";
+//                        while (j < 15) {
+//                            subString = subString + exploredString.charAt(j + i);
+//                            j++;
+//                        }
+//                        resultString = subString + resultString;
+//                    }
+//                    hexBigIntegerExplored = new BigInteger(resultString, 2);
+//                    resultString = hexBigIntegerExplored.toString(16);
 
                     JSONObject amdObject = new JSONObject();
-                    amdObject.put("explored", "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
-                    amdObject.put("length", amdString.length() * 4);
-                    amdObject.put("obstacle", resultString);
+                    amdObject.put("explored", mapInfo);
+                    //amdObject.put("length", amdString.length() * 4);
+                    //amdObject.put("obstacle", resultString);
                     JSONArray amdArray = new JSONArray();
                     amdArray.put(amdObject);
                     JSONObject amdMessage = new JSONObject();
@@ -837,6 +826,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
 
             if (gridMap.getAutoUpdate()) {
+                try {
+                    gridMap.setReceivedJsonObject(new JSONObject(message));
+                    gridMap.updateMapInformation();
+                    showLog("messageReceiver: try decode successful");
+                } catch (JSONException e) {
+                    showLog("messageReceiver: try decode unsuccessful");
+                }
+            } else {
+              //Remove this part when testing done
                 try {
                     gridMap.setReceivedJsonObject(new JSONObject(message));
                     gridMap.updateMapInformation();
@@ -899,27 +897,27 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 showLog("Sensor Move Forward Detected");
                 gridMap.moveRobot("forward");
                 refreshLabel();
-                printMessage("AW1|");
+                sendMessage("AW1|");
             } else if (y > 2) {
                 //move backward
                 showLog("Sensor Move Backward Detected");
                 gridMap.moveRobot("back");
                 refreshLabel();
-                printMessage("AS1|");
+                sendMessage("AS1|");
 
             } else if (x > 2) {
                 //move left
                 showLog("Sensor Move Left Detected");
                 gridMap.moveRobot("left");
                 refreshLabel();
-                printMessage("AA1|");
+                sendMessage("AA1|");
 
             } else if (x < -2) {
                 //move right
                 showLog("Sensor Move Right Detected");
                 gridMap.moveRobot("right");
                 refreshLabel();
-                printMessage("AD1|");
+                sendMessage("AD1|");
             }
         }
         //set flag back to false so that it wont execute the code above until 1-2 seconds later

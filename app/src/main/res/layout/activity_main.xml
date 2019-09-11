@@ -440,7 +440,6 @@
         android:textSize="11sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/imagesTextView"
         app:layout_constraintTop_toBottomOf="@+id/messageReceivedTitleTextView" />
 
     <ToggleButton

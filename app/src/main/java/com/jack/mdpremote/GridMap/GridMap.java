@@ -351,8 +351,7 @@ public class GridMap extends View {
         row = this.convertRow(row);
         cells[col][row].setType("waypoint");
 
-        // toast is a small message displayed on the screen, similar to a popup notification that remains visible for a short time period
-        MainActivity.printMessage("waypoint", waypointCoord[0], waypointCoord[1]);
+        MainActivity.sendMessage("waypoint", waypointCoord[0], waypointCoord[1]);
         showLog("Exiting setWaypointCoord");
     }
 
@@ -771,7 +770,7 @@ public class GridMap extends View {
                     this.paint = fastestPathColor;
                     break;
                 default:
-                    showLog("setTtype default: " + type);
+                    showLog("setType default: " + type);
                     break;
             }
         }
@@ -793,10 +792,10 @@ public class GridMap extends View {
     }
 
     // to refresh the grid map in auto mode
-    public void refreshMap() {
-        if (this.getAutoUpdate())
-            postInvalidateDelayed(500);
-    }
+//    public void refreshMap() {
+//        if (this.getAutoUpdate())
+//            postInvalidateDelayed(500);
+//    }
 
     // update map information on auto mode
     public void updateMapInformation() throws JSONException {
@@ -807,8 +806,8 @@ public class GridMap extends View {
 
         JSONArray infoJsonArray;
         JSONObject infoJsonObject;
-        String hexStringExplored, hexStringObstacle, exploredString, obstacleString;
-        BigInteger hexBigIntegerExplored, hexBigIntegerObstacle;
+        String hexStringObstacle, exploredString, obstacleString;
+        BigInteger hexBigIntegerObstacle;
         String message;
 
         if (mapInformation == null)
@@ -823,43 +822,71 @@ public class GridMap extends View {
                     infoJsonArray = mapInformation.getJSONArray("map");
                     infoJsonObject = infoJsonArray.getJSONObject(0);
 
-                    hexStringExplored = infoJsonObject.getString("explored");
-                    hexBigIntegerExplored = new BigInteger(hexStringExplored, 16);
-                    exploredString = hexBigIntegerExplored.toString(2);
-                    showLog("updateMapInformation.exploredString: " + exploredString);
+                    exploredString = infoJsonObject.getString("explored");
+                    exploredString = exploredString.replaceAll("0", "0000");
+                    exploredString = exploredString.replaceAll("1", "0001");
+                    exploredString = exploredString.replaceAll("2", "0010");
+                    exploredString = exploredString.replaceAll("3", "0011");
+                    exploredString = exploredString.replaceAll("4", "0100");
+                    exploredString = exploredString.replaceAll("5", "0101");
+                    exploredString = exploredString.replaceAll("6", "0110");
+                    exploredString = exploredString.replaceAll("7", "0111");
+                    exploredString = exploredString.replaceAll("8", "1000");
+                    exploredString = exploredString.replaceAll("9", "1001");
+                    exploredString = exploredString.replaceAll("A", "1010");
+                    exploredString = exploredString.replaceAll("B", "1011");
+                    exploredString = exploredString.replaceAll("C", "1100");
+                    exploredString = exploredString.replaceAll("D", "1101");
+                    exploredString = exploredString.replaceAll("E", "1110");
+                    exploredString = exploredString.replaceAll("F", "1111");
+                    showLog("updateMapInformation.exploredString: " + exploredString + ", length: " + exploredString.length());
 
                     // set explored and unexplored cells
                     int x, y;
-                    for (int j = 0; j < exploredString.length() - 4; j++) {
+                    for (int j = 0; j < exploredString.length(); j+=2) {
                         // android coordinate
-                        y = 19 - (j / 15);
-                        x = 1 + j - ((19 - y) * 15);
-                        if ((String.valueOf(exploredString.charAt(j + 2))).equals("1") && !cells[x][y].type.equals("robot"))  //  && !cells[x][y].type.equals("image")
-                            cells[x][y].setType("explored");
-                        else if ((String.valueOf(exploredString.charAt(j + 2))).equals("0") && !cells[x][y].type.equals("robot"))  // && !cells[x][y].type.equals("image")
-                            cells[x][y].setType("unexplored");
-                    }
+                        y = 19 - (j / 30);
+                        x = 1 + (j/2) - ((19 - y) * 15);
 
-                    int length = infoJsonObject.getInt("length");
-
-                    hexStringObstacle = infoJsonObject.getString("obstacle");
-                    showLog("updateMapInformation hexStringObstacle: " + hexStringObstacle);
-                    hexBigIntegerObstacle = new BigInteger(hexStringObstacle, 16);
-                    showLog("updateMapInformation hexBigIntegerObstacle: " + hexBigIntegerObstacle);
-                    obstacleString = hexBigIntegerObstacle.toString(2);
-                    while (obstacleString.length() < length) {
-                        obstacleString = "0" + obstacleString;
-                    }
-                    showLog("updateMapInformation obstacleString: " + obstacleString);
-
-                    int k = 0;
-                    for (int row = ROW - 1; row >= 0; row--)
-                        for (int col = 1; col <= COL; col++)
-                            if ((cells[col][row].type.equals("explored") || (cells[col][row].type.equals("robot"))) && k < obstacleString.length()) { // ||cells[col][row].type.equals("image")
-                                if ((String.valueOf(obstacleString.charAt(k))).equals("1")) //  && !cells[col][row].type.equals("image")
-                                    this.setObstacleCoord(col, 20 - row);
-                                k++;
+                        if (!cells[x][y].type.equals("robot")){
+                            //  && !cells[x][y].type.equals("image")
+                            if ((String.valueOf(exploredString.charAt(j))).equals("1") && (String.valueOf(exploredString.charAt(j + 1))).equals("1") ) {
+                                //cells[x][y].setType("image");
+                            } else if ((String.valueOf(exploredString.charAt(j))).equals("1") ){
+                                cells[x][y].setType("explored");
+                            } else if ((String.valueOf(exploredString.charAt(j+1))).equals("1")){
+                                this.setObstacleCoord(x, 20-y);
+                                showLog("updateMapInformation.exploredString: ");
+                            } else {
+                                cells[x][y].setType("unexplored");
                             }
+
+
+                        }
+
+                    }
+
+//                    int length = infoJsonObject.getInt("length");
+//
+//                    hexStringObstacle = infoJsonObject.getString("obstacle");
+//                    showLog("updateMapInformation hexStringObstacle: " + hexStringObstacle);
+//                    hexBigIntegerObstacle = new BigInteger(hexStringObstacle, 16);
+//                    showLog("updateMapInformation hexBigIntegerObstacle: " + hexBigIntegerObstacle);
+//                    obstacleString = hexBigIntegerObstacle.toString(2);
+//                    while (obstacleString.length() < length) {
+//                        obstacleString = "0" + obstacleString;
+//                    }
+//                    showLog("updateMapInformation obstacleString: " + obstacleString);
+//
+//                    int k = 0;
+//                    //y row 19 to 0 x col 1 to 15
+//                    for (int row = ROW - 1; row >= 0; row--)
+//                        for (int col = 1; col <= COL; col++)
+//                            if ((cells[col][row].type.equals("explored") || (cells[col][row].type.equals("robot"))) && k < obstacleString.length()) { // ||cells[col][row].type.equals("image")
+//                                if ((String.valueOf(obstacleString.charAt(k))).equals("1")) //  && !cells[col][row].type.equals("image")
+//                                    this.setObstacleCoord(col, 20 - row);
+//                                k++;
+//                            }
 
                     // set waypoint cells if it exist
                     int[] waypointCoord = this.getWaypointCoord();
@@ -992,7 +1019,7 @@ public class GridMap extends View {
                 startCoordStatus = false;
                 // print out the message sent to other device
                 try {
-                    MainActivity.printMessage("starting", column, row);
+                    MainActivity.sendMessage("starting", column, row);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
