@@ -294,7 +294,7 @@ public class GridMap extends View {
         // for updating the x-axis, y-axis and direction axis (for auto mode)
         TextView xAxisTextView = ((Activity) this.getContext()).findViewById(R.id.xAxisTextView);
         TextView yAxisTextView = ((Activity) this.getContext()).findViewById(R.id.yAxisTextView);
-        Spinner directionDropdown = ((Activity) this.getContext()).findViewById(R.id.spinner1);
+        Spinner directionDropdown = ((Activity) this.getContext()).findViewById(R.id.directionDropdown);
         switch (direction){
             case "None":
                 directionDropdown.setSelection(0);

@@ -28,6 +28,7 @@
         android:layout_marginEnd="16dp"
         android:onClick="toggleButtonScan"
         android:text="SCAN"
+        android:background="@color/milkBeige"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
@@ -48,6 +49,7 @@
 
     <ListView
         android:id="@+id/pairedDevicesListView"
+        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_marginStart="8dp"
@@ -81,6 +83,7 @@
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:gravity="bottom"
+        android:layout_marginTop="10dp"
         android:layout_marginStart="8dp"
         android:listSelector="#bdb9b9"
         android:scrollbars="vertical"
@@ -97,6 +100,7 @@
         android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
         android:text="CONNECT"
+        android:background="@color/milkBeige"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/otherDevicesListView" />
 
@@ -107,6 +111,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="Bluetooth"
+        android:textColor="#0000FF"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 

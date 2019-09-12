@@ -162,10 +162,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         exploredImageBtn = findViewById(R.id.exploredImageBtn);
         obstacleImageBtn = findViewById(R.id.obstacleImageBtn);
         clearImageBtn = findViewById(R.id.unexploredImageBtn);
-        directionDropdown = findViewById(R.id.spinner1);
+        directionDropdown = findViewById(R.id.directionDropdown);
 
         sendReceiveMenuItem = findViewById(R.id.sendReceiveMenuItem);
-        getMapMenuItem = findViewById(R.id.getMapMenuItem);
+        //getMapMenuItem = findViewById(R.id.getMapMenuItem);
         bluetoothMenuItem = findViewById(R.id.bluetoothMenuItem);
         connStatusTextView = findViewById(R.id.connStatusTextView);
 
@@ -591,10 +591,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 intent = new Intent(MainActivity.this, SendReceive.class);
                 editor.putString("receivedText", messageReceivedTextView.getText().toString());
                 break;
-            case R.id.getMapMenuItem:
-                showToast("Get Map Information selected");
-                intent = new Intent(MainActivity.this, MapInformation.class);
-                break;
+//            case R.id.getMapMenuItem:
+//                showToast("Get Map Information selected");
+//                intent = new Intent(MainActivity.this, MapInformation.class);
+//                break;
 
             default:
                 showToast("onOptionsItemSelected has reached default");

@@ -14,10 +14,10 @@
         android:title="Send/Receive"
         app:showAsAction="never" />
 
-    <item
-        android:id="@+id/getMapMenuItem"
-        android:icon="@drawable/ic_map_info"
-        android:title="Map Information"
-        app:showAsAction="never" />
+<!--    <item-->
+<!--        android:id="@+id/getMapMenuItem"-->
+<!--        android:icon="@drawable/ic_map_info"-->
+<!--        android:title="Map Information"-->
+<!--        app:showAsAction="never" />-->
 
 </menu>
