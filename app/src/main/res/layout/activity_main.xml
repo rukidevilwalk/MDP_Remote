@@ -179,11 +179,13 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="15dp"
         android:layout_marginEnd="8dp"
-        android:background="@color/milkBeige"
+        android:background="@color/colorWhite"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/mapView"
         app:layout_constraintTop_toBottomOf="@+id/fastestToggleBtn"
-        app:srcCompat="@drawable/ic_arrow_move_forward" />
+        app:srcCompat="@drawable/ic_dpad_up" />
 
     <ImageButton
         android:id="@+id/moveBackwardImageBtn"
@@ -191,35 +193,41 @@
         android:layout_height="55dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:background="@color/milkBeige"
+        android:background="@color/colorWhite"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/mapView"
         app:layout_constraintTop_toBottomOf="@+id/turnLeftImageBtn"
-        app:srcCompat="@drawable/ic_arrow_move_backward" />
+        app:srcCompat="@drawable/ic_dpad_down" />
 
     <ImageButton
         android:id="@+id/turnLeftImageBtn"
         android:layout_width="55dp"
         android:layout_height="55dp"
         android:layout_marginStart="10dp"
+        android:background="@color/colorWhite"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        android:background="@color/milkBeige"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
         app:layout_constraintStart_toEndOf="@+id/mapView"
         app:layout_constraintTop_toBottomOf="@+id/moveForwardImageBtn"
-        app:srcCompat="@drawable/ic_arrow_move_left" />
+        app:srcCompat="@drawable/ic_dpad_left" />
 
     <ImageButton
         android:id="@+id/turnRightImageBtn"
         android:layout_width="55dp"
         android:layout_height="55dp"
         android:layout_marginEnd="10dp"
-        android:background="@color/milkBeige"
+        android:background="@color/colorWhite"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/mapView"
         app:layout_constraintTop_toBottomOf="@+id/moveForwardImageBtn"
-        app:srcCompat="@drawable/ic_arrow_move_right" />
+        app:srcCompat="@drawable/ic_dpad_right" />
 
     <Switch
         android:id="@+id/phoneTiltSwitch"
