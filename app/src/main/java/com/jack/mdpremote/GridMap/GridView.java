@@ -32,7 +32,7 @@ public class GridView extends View {
     public static JSONObject mapJsonObject;
     public static Cell[][] cells;
     private ArrayList<String[]> arrowCoord = new ArrayList<>();
-    Bitmap arrowBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_error);   // default image for bitmap
+    Bitmap arrowBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.arrow_error);   // default image for bitmap
 
     private String exploredString = "";
     private String obstacleString = "";
@@ -300,16 +300,16 @@ public class GridView extends View {
             rect = new RectF(col * cellSize, row * cellSize, (col + 1) * cellSize, (row + 1) * cellSize);
             switch (arrowCoord.get(i)[2]) {
                 case "up":
-                    arrowBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_up);
+                    arrowBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.arrow_up);
                     break;
                 case "right":
-                    arrowBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_right);
+                    arrowBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.arrow_right);
                     break;
                 case "down":
-                    arrowBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_down);
+                    arrowBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.arrow_down);
                     break;
                 case "left":
-                    arrowBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_left);
+                    arrowBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.arrow_left);
                     break;
                 default:
                     break;

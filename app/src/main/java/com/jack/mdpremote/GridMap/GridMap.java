@@ -39,7 +39,7 @@ public class GridMap extends View {
     private static final int COL = 15, ROW = 20;
     private static float cellSize;      // indicating the cell size
     private static JSONObject receivedJsonObject = new JSONObject();    // for storing the current map information
-    private static JSONObject mapInformation;           // for creating a dummy information and to send information to MapInformation.class
+    private static JSONObject mapInformation;           // for creating a placeholder information and to send information to MapInformation.class
     private static JSONObject backupMapInformation;     // for saving a copy of the received map information
     private static Cell[][] cells;      // for creating cells
     private static String robotDirection = "None";      // indicate the current direction of the robot
@@ -58,7 +58,7 @@ public class GridMap extends View {
     private static boolean unSetCellStatus = false;     // false: cannot unset cell, true: can unset cell
     private static boolean setExploredStatus = false;   // false: cannot check cell, true: can check cell
     private static boolean validPosition = false;       // false: robot out of range, true: robot within range
-    private Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_error);   // default image for bitmap
+    private Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.arrow_error);   // default image for bitmap
 
     private Paint blackPaint = new Paint();         // for lines, etc
     private Paint obstacleColor = new Paint();      // black = obstacles position
@@ -86,11 +86,11 @@ public class GridMap extends View {
         init(attrs);
         blackPaint.setStyle(Paint.Style.FILL_AND_STROKE);   // for lines, etc
         obstacleColor.setColor(Color.BLACK);                // black = obstacles position
-        robotColor.setColor(Color.GREEN);                   // black = obstacles position
-        endColor.setColor(Color.RED);                       // red = end position
+        robotColor.setColor(Color.CYAN);                   // black = robot position
+        endColor.setColor(Color.GREEN);                       // dark green = end position
         startColor.setColor(Color.CYAN);                    // green = start position
         waypointColor.setColor(Color.YELLOW);               // yellow = waypoint position
-        unexploredColor.setColor(Color.GRAY);               // gray = unexplored position
+        unexploredColor.setColor(Color.GRAY);               // black = unexplored position
         exploredColor.setColor(Color.WHITE);                // white = explored position
         imageColor.setColor(Color.BLACK);                   // black = image position
         fastestPathColor.setColor(Color.MAGENTA);           // magenta = fastest path position
@@ -121,12 +121,12 @@ public class GridMap extends View {
         // if map not drawn
         if (!this.getMapDrawn()) {
             canvas.drawColor(Color.parseColor("#C2E8FF"));
-            // create dummy for image coordinate (not sure why)
-            String[] dummyImageCoord = new String[3];
-            dummyImageCoord[0] = "1";
-            dummyImageCoord[1] = "1";
-            dummyImageCoord[2] = "dummy";
-            imageCoord.add(dummyImageCoord);
+            // create placeholder for image coordinate (not sure why)
+            String[] placeholderImageCoord = new String[3];
+            placeholderImageCoord[0] = "999";
+            placeholderImageCoord[1] = "999";
+            placeholderImageCoord[2] = "placeholder";
+            imageCoord.add(placeholderImageCoord);
             // create cell only when launching the application
             this.createCell();
             // set ending coordinate
@@ -554,9 +554,11 @@ public class GridMap extends View {
             if (this.getImageCoord().get(i)[0].equals(imageCoord[0]) && this.getImageCoord().get(i)[1].equals(imageCoord[1]) && this.getImageCoord().get(i)[1].equals(imageCoord[1]))
                 update = false;
 
+            if (!update)
+        showLog("false");
         // Check if image coord is new, add the new image and print out the coord
         if (update) {
-
+            showLog("Cell type: " + cells[col][20-row].type);
             if (cells[col][20-row].type.equals("obstacle")) {
 
                 try {
@@ -671,56 +673,56 @@ public class GridMap extends View {
         RectF rect;
 
         for (int i = 0; i < imageCoord.size(); i++) {
-            if (!imageCoord.get(i)[2].equals("dummy")) {
+            if (!imageCoord.get(i)[2].equals("placeholder")) {
                 // convert to android coordinate
                 int col = Integer.parseInt(imageCoord.get(i)[0]);
                 int row = convertRow(Integer.parseInt(imageCoord.get(i)[1]));
                 rect = new RectF(col * cellSize, row * cellSize, (col + 1) * cellSize, (row + 1) * cellSize);
                 switch (imageCoord.get(i)[2]) {
                     case "1":
-                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_up);
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.one);
                         break;
                     case "2":
-                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_up);
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.two);
                         break;
                     case "3":
-                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_up);
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.three);
                         break;
                     case "4":
-                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_up);
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.four);
                         break;
                     case "5":
-                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_up);
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.five);
                         break;
                     case "A":
-                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_up);
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.letter_a);
                         break;
                     case "B":
-                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_up);
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.letter_b);
                         break;
                     case "C":
-                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_up);
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.letter_c);
                         break;
                     case "D":
-                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_up);
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.letter_d);
                         break;
                     case "E":
-                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_up);
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.letter_e);
                         break;
                     case "circle":
-                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_up);
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.circle);
                         break;
                     case "up":
-                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_up);
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.arrow_up);
                         break;
                     case "right":
-                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_right);
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.arrow_right);
                         break;
                     case "down":
-                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_down);
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.arrow_down);
                         break;
                     case "left":
-                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_left);
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.arrow_left);
                         break;
                     default:
                         break;
@@ -938,7 +940,7 @@ public class GridMap extends View {
                     mapInfoJsonArray = mapInformation.getJSONArray("image");
                     for (int j = 0; j < mapInfoJsonArray.length(); j++) {
                         mapInfoJsonObject = mapInfoJsonArray.getJSONObject(j);
-                        if (!mapInfoJsonObject.getString("imageType").equals("dummy")) {
+                        if (!mapInfoJsonObject.getString("imageType").equals("placeholder")) {
                             this.setImageCoordinate(mapInfoJsonObject.getInt("imageX"), mapInfoJsonObject.getInt("imageY"), mapInfoJsonObject.getString("imageType"));
 
                         }
@@ -1096,7 +1098,7 @@ public class GridMap extends View {
         ToggleButton setWaypointToggleBtn = ((Activity) this.getContext()).findViewById(R.id.setWaypointToggleBtn);
         Button obstacleImageBtn = ((Activity) this.getContext()).findViewById(R.id.obstacleImageBtn);
         Button exploredImageBtn = ((Activity) this.getContext()).findViewById(R.id.exploredImageBtn);
-        Button clearImageBtn = ((Activity) this.getContext()).findViewById(R.id.clearImageBtn);
+        Button clearImageBtn = ((Activity) this.getContext()).findViewById(R.id.unexploredImageBtn);
 
         if (!buttonName.equals("setStartPointToggleBtn"))
             if (setStartPointToggleBtn.isChecked()) {
@@ -1279,6 +1281,8 @@ public class GridMap extends View {
         TextView robotStatusTextView = ((Activity) this.getContext()).findViewById(R.id.robotStatusTextView);
         ToggleButton manualAutoToggleBtn = ((Activity) this.getContext()).findViewById(R.id.manualAutoToggleBtn);
         Switch phoneTiltSwitch = ((Activity) this.getContext()).findViewById(R.id.phoneTiltSwitch);
+        Button manualUpdateBtn = ((Activity) this.getContext()).findViewById(R.id.manualUpdateBtn);
+        manualUpdateBtn.setEnabled(true);
         updateRobotAxis(0, 0, "None");
         robotStatusTextView.setText("None");
         sharedPreferences();
@@ -1310,7 +1314,7 @@ public class GridMap extends View {
         mapDrawn = false;           // set map drawn to false
         canDrawRobot = false;       // set can draw robot to false
         validPosition = false;      // set valid position to false
-        Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_error);   // default image for bitmap
+        Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.arrow_error);   // default image for bitmap
 
         showLog("Exiting resetMap");
         this.invalidate();

@@ -80,7 +80,8 @@ public class SendReceive extends AppCompatActivity {
         f1Btn = findViewById(R.id.f1Btn);
         f2Btn = findViewById(R.id.f2Btn);
         reconfigureBtn = findViewById(R.id.reconfigureBtn);
-        // allows scrolling of text view
+
+
         messageBoxReceivedTextView.setMovementMethod(new ScrollingMovementMethod());
         messageBoxSentTextView.setMovementMethod(new ScrollingMovementMethod());
 
@@ -102,8 +103,6 @@ public class SendReceive extends AppCompatActivity {
             showLog("setText for f2Btn: " + f2Btn.getContentDescription().toString());
         }
 
-
-        // for declaraction of fragment manager
         final FragmentManager fragmentManager = getFragmentManager();
         final ReconfigureFragment reconfigureFragment = new ReconfigureFragment();
 
@@ -199,6 +198,7 @@ public class SendReceive extends AppCompatActivity {
                 dialog.dismiss();
             }
         });
+
     }
 
     // for receiving from bluetooth
@@ -246,7 +246,7 @@ public class SendReceive extends AppCompatActivity {
                 connStatusTextView.setText("None");
 
                 //show disconnected dialog
-                closeKeyboard(SendReceive.this); //NEED TO HIDE KEYBOARD BEFORE SHOWING DIALOG IF NOT THE APP WILL CRASH
+                closeKeyboard(SendReceive.this);
                 myDialog.show();
             }
             editor.commit();
@@ -258,7 +258,7 @@ public class SendReceive extends AppCompatActivity {
         super.onDestroy();
         try {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);
-            LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver5);            //unregisterReceiver(mBroadcastReceiver5);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver5);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }

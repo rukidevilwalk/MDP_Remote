@@ -20,28 +20,4 @@
         android:title="Map Information"
         app:showAsAction="never" />
 
-    <item
-        android:id="@+id/menuMenuItem"
-        android:title="Map"
-        app:showAsAction="never" >
-
-        <menu
-            android:id="@+id/mapMenuItem"
-            android:title="Map Menu"
-            app:showAsAction="never" >
-
-            <item
-                android:id="@+id/saveMapMenuItem"
-                android:icon="@drawable/ic_message"
-                android:title="Save Map"
-                app:showAsAction="never" />
-
-            <item
-                android:id="@+id/loadMapMenuItem"
-                android:title="Load Map"
-                app:showAsAction="never" />
-
-        </menu>
-    </item>
-
 </menu>

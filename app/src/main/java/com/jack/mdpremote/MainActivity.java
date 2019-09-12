@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         setWaypointToggleBtn = findViewById(R.id.setWaypointToggleBtn);
         exploredImageBtn = findViewById(R.id.exploredImageBtn);
         obstacleImageBtn = findViewById(R.id.obstacleImageBtn);
-        clearImageBtn = findViewById(R.id.clearImageBtn);
+        clearImageBtn = findViewById(R.id.unexploredImageBtn);
         directionDropdown = findViewById(R.id.spinner1);
 
         sendReceiveMenuItem = findViewById(R.id.sendReceiveMenuItem);
@@ -511,7 +511,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onClick(View view) {
                 showLog("Clicked manualAutoToggleBtn");
-                if (manualAutoToggleBtn.getText().equals("MANUAL")) {
+                if (manualAutoToggleBtn.getText().equals("AUTO")) {
                     try {
                         gridMap.setAutoUpdate(true);
                         autoUpdate = true;
@@ -521,7 +521,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         e.printStackTrace();
                     }
                     showToast("AUTO mode");
-                } else if (manualAutoToggleBtn.getText().equals("AUTO")) {
+                } else if (manualAutoToggleBtn.getText().equals("MANUAL")) {
                     try {
                         gridMap.setAutoUpdate(false);
                         autoUpdate = false;
@@ -594,31 +594,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             case R.id.getMapMenuItem:
                 showToast("Get Map Information selected");
                 intent = new Intent(MainActivity.this, MapInformation.class);
-                break;
-            case R.id.menuMenuItem:
-                startActivityStatus = false;
-                break;
-            case R.id.saveMapMenuItem:
-                showToast("Map saved");
-                showLog("saveMapMenuItem: " + String.valueOf(gridMap.getMapInformation()));
-                editor.putString("mapSaved", String.valueOf(gridMap.getMapInformation()));
-                startActivityStatus = false;
-                break;
-            case R.id.loadMapMenuItem:
-                if (sharedPreferences.contains("mapSaved")) {
-                    try {
-                        showLog("loadMapMenuItem: " + sharedPreferences.getString("mapSaved", ""));
-                        gridMap.setReceivedJsonObject(new JSONObject(sharedPreferences.getString("mapSaved", "")));
-                        gridMap.updateMapInformation();
-                        showToast("Map loaded");
-                        showLog("loadMapMenuItem try success");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        showLog("loadMapMenuItem try fail");
-                    }
-                } else
-                    showToast("No map found");
-                startActivityStatus = false;
                 break;
 
             default:
