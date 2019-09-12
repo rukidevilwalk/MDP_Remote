@@ -35,8 +35,6 @@ import java.util.List;
 
 public class GridMap extends View {
 
-    // declarations of attributes
-    // static variable is created only one in the program at the time of loading of class
     private static final String TAG = "GridMap";
     private static final int COL = 15, ROW = 20;
     private static float cellSize;      // indicating the cell size
@@ -363,15 +361,15 @@ public class GridMap extends View {
 
     // set obstacle coordinate
     private void setObstacleCoord(int col, int row) {
-        showLog("Entering setObstacleCoord");
-        // screen coordinate
+        showLog("Setting obstacle coordinates");
+
         int[] obstacleCoord = new int[]{col, row};
         GridMap.obstacleCoord.add(obstacleCoord);
-        // convert to android coordinate
+
         row = this.convertRow(row);
-        // change the color of obstacle coordinate
+
         cells[col][row].setType("obstacle");
-        showLog("Exiting setObstacleCoord");
+
     }
 
     // get obstacle coordinate (screen coordinate)
@@ -543,35 +541,44 @@ public class GridMap extends View {
 
     // set image coordinate
     private void setImageCoordinate(int col, int row, String imageType) {
-        showLog("");
-        // screen coordinate
-        int[] obstacleCoord = new int[]{col, row};
-        String[] imageCoord = new String[3];     // 0: col, 1: row, 2: face
+
+        String[] imageCoord = new String[3];
         imageCoord[0] = String.valueOf(col);
         imageCoord[1] = String.valueOf(row);
         imageCoord[2] = imageType;
 
         boolean update = true;
 
-        // printing the image coordinate on the screen
+        // Check if there is already a current image coord printed out
         for (int i = 0; i < this.getImageCoord().size(); i++)
             if (this.getImageCoord().get(i)[0].equals(imageCoord[0]) && this.getImageCoord().get(i)[1].equals(imageCoord[1]) && this.getImageCoord().get(i)[1].equals(imageCoord[1]))
                 update = false;
 
+        // Check if image coord is new, add the new image and print out the coord
         if (update) {
-            if (cells[col][row].type.equals("obstacle")) {
-                this.getImageCoord().add(imageCoord);
-                this.sharedPreferences();
-                String message = "(" + String.valueOf(col - 1) + ", " + String.valueOf(row - 1) + ", " + imageCoord[2] + ")";
-                editor.putString("image", sharedPreferences.getString("image", "") + "\n " + message);
-                editor.commit();
+
+            if (cells[col][20-row].type.equals("obstacle")) {
+
+                try {
+
+                    this.getImageCoord().add(imageCoord);
+                    this.sharedPreferences();
+                    String message = "(" + (col - 1) + ", " + (row - 1) + ", " + imageCoord[2] + ")";
+                    editor.putString("image", sharedPreferences.getString("image", "") + "\n " + message);
+                    editor.commit();
+                    showLog("Creating image: " + message);
+                    row = convertRow(row);
+                    cells[col][row].setType("image");
+
+                } catch (Exception e){
+
+                    showLog("Error creating image: " + e);
+
+                }
+
             }
         }
 
-        // convert to android coordinate
-        row = convertRow(row);
-        cells[col][row].setType("image");
-        showLog("Exiting setImageCoordinate");
     }
 
     // get image coordinate (screen coordinate)
@@ -793,7 +800,6 @@ public class GridMap extends View {
 
     // update map information on auto mode
     public void updateMapInformation() throws JSONException {
-        showLog("Entering updateMapInformation");
         // current map information
         JSONObject mapInformation = this.getReceivedJsonObject();
         showLog("updateMapInformation --- mapInformation: " + mapInformation);
@@ -845,22 +851,10 @@ public class GridMap extends View {
 
                     // Render current map layout
                     exploredString = mapInfoJsonObject.getString("explored");
-                    exploredString = exploredString.replaceAll("0", "0000");
-                    exploredString = exploredString.replaceAll("1", "0001");
-                    exploredString = exploredString.replaceAll("2", "0010");
-                    exploredString = exploredString.replaceAll("3", "0011");
-                    exploredString = exploredString.replaceAll("4", "0100");
-                    exploredString = exploredString.replaceAll("5", "0101");
-                    exploredString = exploredString.replaceAll("6", "0110");
-                    exploredString = exploredString.replaceAll("7", "0111");
-                    exploredString = exploredString.replaceAll("8", "1000");
-                    exploredString = exploredString.replaceAll("9", "1001");
-                    exploredString = exploredString.replaceAll("A", "1010");
-                    exploredString = exploredString.replaceAll("B", "1011");
-                    exploredString = exploredString.replaceAll("C", "1100");
-                    exploredString = exploredString.replaceAll("D", "1101");
-                    exploredString = exploredString.replaceAll("E", "1110");
-                    exploredString = exploredString.replaceAll("F", "1111");
+                    exploredString = "F" + exploredString; //Add F to start of string to prevent 0s at the start from being removed
+                    exploredString = new BigInteger(exploredString, 16).toString(2);
+                    exploredString = exploredString.substring(4); // Remove F that was added earlier
+
                     showLog("updateMapInformation.exploredString: " + exploredString + ", length: " + exploredString.length());
 
                     // set cells to explored, unexplored and obstacle
@@ -871,42 +865,31 @@ public class GridMap extends View {
                         x = 1 + (j/2) - ((19 - y) * 15);
 
                         if (!cells[x][y].type.equals("robot")){
-                            //  && !cells[x][y].type.equals("image")
+
+                            // 11 = Image
                             if ((String.valueOf(exploredString.charAt(j))).equals("1") && (String.valueOf(exploredString.charAt(j + 1))).equals("1") ) {
-                                //cells[x][y].setType("image");
-                            } else if ((String.valueOf(exploredString.charAt(j))).equals("1") ){
-                                cells[x][y].setType("explored");
-                            } else if ((String.valueOf(exploredString.charAt(j+1))).equals("1")){
+
                                 this.setObstacleCoord(x, 20-y);
+
+                                // 10 = Explored
+                            } else if ((String.valueOf(exploredString.charAt(j))).equals("1") ){
+
+                                cells[x][y].setType("explored");
+
+                                // 01 = Obstacle
+                            } else if ((String.valueOf(exploredString.charAt(j+1))).equals("1")){
+
+                                this.setObstacleCoord(x, 20-y);
+
+                                // 00 = Unexplored
                             } else {
+
                                 cells[x][y].setType("unexplored");
                             }
 
                         }
 
                     }
-
-//                    int length = mapInfoJsonObject.getInt("length");
-//
-//                    hexStringObstacle = mapInfoJsonObject.getString("obstacle");
-//                    showLog("updateMapInformation hexStringObstacle: " + hexStringObstacle);
-//                    hexBigIntegerObstacle = new BigInteger(hexStringObstacle, 16);
-//                    showLog("updateMapInformation hexBigIntegerObstacle: " + hexBigIntegerObstacle);
-//                    obstacleString = hexBigIntegerObstacle.toString(2);
-//                    while (obstacleString.length() < length) {
-//                        obstacleString = "0" + obstacleString;
-//                    }
-//                    showLog("updateMapInformation obstacleString: " + obstacleString);
-//
-//                    int k = 0;
-//                    //y row 19 to 0 x col 1 to 15
-//                    for (int row = ROW - 1; row >= 0; row--)
-//                        for (int col = 1; col <= COL; col++)
-//                            if ((cells[col][row].type.equals("explored") || (cells[col][row].type.equals("robot"))) && k < obstacleString.length()) { // ||cells[col][row].type.equals("image")
-//                                if ((String.valueOf(obstacleString.charAt(k))).equals("1")) //  && !cells[col][row].type.equals("image")
-//                                    this.setObstacleCoord(col, 20 - row);
-//                                k++;
-//                            }
 
 
                     // set waypoint cells
@@ -950,14 +933,14 @@ public class GridMap extends View {
 //
 //                    break;
 
-                // if it contains image array
+                // Custom image coord/type instruction
                 case "image":
                     mapInfoJsonArray = mapInformation.getJSONArray("image");
                     for (int j = 0; j < mapInfoJsonArray.length(); j++) {
                         mapInfoJsonObject = mapInfoJsonArray.getJSONObject(j);
-                        if (!mapInfoJsonObject.getString("face").equals("dummy")) {
-                            this.setImageCoordinate(mapInfoJsonObject.getInt("x"), mapInfoJsonObject.getInt("y"), mapInfoJsonObject.getString("face"));
-                            message = "Image:  (" + String.valueOf(mapInfoJsonObject.getInt("x")) + "," + String.valueOf(mapInfoJsonObject.getInt("y")) + "), face: " + mapInfoJsonObject.getString("face");
+                        if (!mapInfoJsonObject.getString("imageType").equals("dummy")) {
+                            this.setImageCoordinate(mapInfoJsonObject.getInt("imageX"), mapInfoJsonObject.getInt("imageY"), mapInfoJsonObject.getString("imageType"));
+
                         }
                     }
                     break;
@@ -1011,7 +994,8 @@ public class GridMap extends View {
         return this.getCreateJsonObject();
     }
 
-    // print on robot status
+    // Only need to use this if robot status message will be stored in a jsonobject
+    // Else, can just directly display message in main activity
     public void printRobotStatus(String message) {
         TextView robotStatusTextView = ((Activity) this.getContext()).findViewById(R.id.robotStatusTextView);
         robotStatusTextView.setText(message);
@@ -1248,9 +1232,9 @@ public class GridMap extends View {
         for (int i = 0; i < imageCoord.size(); i++) {
             try {
                 JSONObject image = new JSONObject();
-                image.put("x", Integer.parseInt(imageCoord.get(i)[0]));
-                image.put("y", Integer.parseInt(imageCoord.get(i)[1]));
-                image.put("face", imageCoord.get(i)[2]);
+                image.put("imageX", Integer.parseInt(imageCoord.get(i)[0]));
+                image.put("imageY", Integer.parseInt(imageCoord.get(i)[1]));
+                image.put("imageType", imageCoord.get(i)[2]);
                 jsonImage.put(image);
             } catch (JSONException e) {
                 // TODO Auto-generated catch block

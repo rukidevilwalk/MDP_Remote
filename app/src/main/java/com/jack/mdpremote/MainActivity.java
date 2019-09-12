@@ -803,80 +803,83 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     BroadcastReceiver messageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String message = intent.getStringExtra("receivedMessage");
-            showLog("receivedMessage: message --- " + message);
+
+            String payload = intent.getStringExtra("receivedMessage");
+            showLog("messageReceiver: " + payload);
+
             try {
 
                 // Receiving robot status message
-           if (message.length() > 8 && message.substring(0, 8).equals("A:status")){
-               String robotStatus = message.substring(8);
+           if (payload.length() > 8 && payload.substring(0, 8).equals("A:status")){
+               String robotStatus = payload.substring(8);
                updateStatus(robotStatus);
 
                // Receiving map information message
-           } else if (message.length() > 5 && message.substring(0, 5).equals("A:map")) {
-                    //String resultString = "";
-                    String robotPositionX = message.substring(5,7);
-               String robotPositionY = message.substring(7,9);
-               String robotDirection = message.substring(9,10);
-               String mapInfo = message.substring(10);
-                    //mapInfo = "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+           } else if (payload.length() > 5 && payload.substring(0, 5).equals("A:map")) {
+
+                    String robotPositionX = payload.substring(5,7);
+                    String robotPositionY = payload.substring(7,9);
+                    String robotDirection = payload.substring(9,10);
+                     String mapInfo = payload.substring(10);  //mapInfo = "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
                     showLog("mapInfo: " + mapInfo);
-//                    BigInteger hexBigIntegerExplored = new BigInteger(amdString, 16);
-//                    String exploredString = hexBigIntegerExplored.toString(2);
-//
-//                    while (exploredString.length() < 300)
-//                        exploredString = "0" + exploredString;
-//
-//                    for (int i = 0; i < exploredString.length(); i = i + 15) {
-//                        int j = 0;
-//                        String subString = "";
-//                        while (j < 15) {
-//                            subString = subString + exploredString.charAt(j + i);
-//                            j++;
-//                        }
-//                        resultString = subString + resultString;
-//                    }
-//                    hexBigIntegerExplored = new BigInteger(resultString, 2);
-//                    resultString = hexBigIntegerExplored.toString(16);
 
-                    JSONObject amdObject = new JSONObject();
-                    amdObject.put("explored", mapInfo);
-               amdObject.put("robotX", robotPositionX);
-               amdObject.put("robotY", robotPositionY);
-               amdObject.put("robotDirection", robotDirection);
-                    //amdObject.put("length", amdString.length() * 4);
-                    //amdObject.put("obstacle", resultString);
-                    JSONArray amdArray = new JSONArray();
-                    amdArray.put(amdObject);
+                    JSONObject payloadObject = new JSONObject();
+                    payloadObject.put("explored", mapInfo);
+                    payloadObject.put("robotX", robotPositionX);
+                    payloadObject.put("robotY", robotPositionY);
+                    payloadObject.put("robotDirection", robotDirection);
 
-                    JSONObject amdMessage = new JSONObject();
-                    amdMessage.put("map", amdArray);
+                    JSONArray payloadArray = new JSONArray();
+                    payloadArray.put(payloadObject);
 
-                    message = String.valueOf(amdMessage);
-                    showLog("Executed for AMD message, message: " + message);
-                }
+                    JSONObject payloadBody = new JSONObject();
+                    payloadBody.put("map", payloadArray);
+
+                    payload = String.valueOf(payloadBody);
+
+                } else if (payload.length() > 7 && payload.substring(0, 7).equals("A:image")){
+
+               String imageX = payload.substring(7,9);
+               String imageY = payload.substring(9,11);
+               String imageType = payload.substring(11);
+
+               JSONObject payloadObject = new JSONObject();
+               payloadObject.put("imageX", imageX);
+               payloadObject.put("imageY", imageY);
+               payloadObject.put("imageType", imageType);
+
+
+               JSONArray payloadArray = new JSONArray();
+               payloadArray.put(payloadObject);
+               JSONObject payloadBody = new JSONObject();
+               payloadBody.put("image", payloadArray);
+
+               payload = String.valueOf(payloadBody);
+
+           }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
             if (gridMap.getAutoUpdate()) {
                 try {
-                    gridMap.setReceivedJsonObject(new JSONObject(message));
+                    gridMap.setReceivedJsonObject(new JSONObject(payload));
                     gridMap.updateMapInformation();
-                    showLog("messageReceiver: try decode successful");
                 } catch (JSONException e) {
-                    showLog("messageReceiver: try decode unsuccessful");
+                    showLog("Map information auto update unsuccessful");
                 }
             }  else {
+
                 try {
-                    gridMap.setReceivedJsonObject(new JSONObject(message));
+                    gridMap.setReceivedJsonObject(new JSONObject(payload));
 
                 } catch (JSONException e) {
-                    showLog("Manual update error" + e);
+                    showLog("Map information manual update error: " + e);
                 }
             }
+
             sharedPreferences();
-            String receivedText = sharedPreferences.getString("receivedText", "") + "\n " + message;
+            String receivedText = sharedPreferences.getString("receivedText", "") + "\n " + payload;
             editor.putString("receivedText", receivedText);
             editor.commit();
         }

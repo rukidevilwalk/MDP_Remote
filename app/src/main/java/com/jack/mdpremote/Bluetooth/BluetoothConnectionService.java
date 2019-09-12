@@ -19,12 +19,11 @@ import java.util.UUID;
 
 
 public class BluetoothConnectionService {
-    BluetoothSettings mBluetoothPopup;
-    private static BluetoothConnectionService instance;
+
     private static final String TAG = "DebuggingTag";
 
     private static final String appName = "MDP Remote";
-    //unique address for the device to connect to each other. Normally the device's own UUID is used but a default is declared here in case of NULL
+
     private static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     private final BluetoothAdapter mBluetoothAdapter;
