@@ -26,7 +26,6 @@
 
     <TextView
         android:id="@+id/exploreTextView"
-        android:visibility="invisible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -41,7 +40,6 @@
 
     <TextView
         android:id="@+id/exploreTimeTextView"
-        android:visibility="invisible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -55,7 +53,6 @@
 
     <ToggleButton
         android:id="@+id/exploreToggleBtn"
-        android:visibility="invisible"
         android:layout_width="120dp"
         android:layout_height="45dp"
         android:layout_marginStart="16dp"
@@ -72,7 +69,6 @@
 
     <ImageButton
         android:id="@+id/exploreResetImageBtn"
-        android:visibility="invisible"
         style="@android:style/Widget.Holo.Light.ImageButton"
         android:layout_width="45dp"
         android:layout_height="45dp"
@@ -87,7 +83,6 @@
 
     <TextView
         android:id="@+id/fastestTextView"
-        android:visibility="invisible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -102,7 +97,6 @@
 
     <TextView
         android:id="@+id/fastestTimeTextView"
-        android:visibility="invisible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -115,7 +109,6 @@
 
     <ToggleButton
         android:id="@+id/fastestToggleBtn"
-        android:visibility="invisible"
         android:layout_width="120dp"
         android:layout_height="45dp"
         android:layout_marginStart="16dp"
@@ -132,7 +125,6 @@
 
     <ImageButton
         android:id="@+id/fastestResetImageBtn"
-        android:visibility="invisible"
         style="@android:style/Widget.Holo.Light.ImageButton"
         android:layout_width="45dp"
         android:layout_height="45dp"
@@ -147,7 +139,6 @@
 
     <TextView
         android:id="@+id/robotStatusTitleTextView"
-        android:visibility="invisible"
         android:layout_width="160dp"
         android:layout_height="25dp"
         android:layout_marginStart="8dp"
@@ -164,7 +155,6 @@
 
     <TextView
         android:id="@+id/robotStatusTextView"
-        android:visibility="invisible"
         android:layout_width="160dp"
         android:layout_height="50dp"
         android:layout_marginStart="8dp"
@@ -238,7 +228,6 @@
 
     <Switch
         android:id="@+id/phoneTiltSwitch"
-        android:visibility="invisible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
@@ -251,7 +240,6 @@
 
     <Button
         android:id="@+id/resetMapBtn"
-        android:visibility="invisible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
@@ -265,7 +253,6 @@
 
     <ToggleButton
         android:id="@+id/setStartPointToggleBtn"
-        android:visibility="invisible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -281,7 +268,6 @@
 
     <ToggleButton
         android:id="@+id/setWaypointToggleBtn"
-        android:visibility="invisible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
@@ -349,7 +335,6 @@
 
     <TextView
         android:id="@+id/directionLabelTextView"
-        android:visibility="invisible"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:layout_marginStart="25dp"
@@ -363,7 +348,6 @@
         app:layout_constraintTop_toBottomOf="@+id/mapView" />
 
     <Spinner android:id="@+id/directionDropdown"
-        android:visibility="invisible"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:layout_marginTop="8dp"
@@ -376,7 +360,6 @@
 
     <Button
         android:id="@+id/exploredImageBtn"
-        android:visibility="invisible"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginStart="20dp"
@@ -390,7 +373,6 @@
 
     <Button
         android:id="@+id/obstacleImageBtn"
-        android:visibility="invisible"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginStart="20dp"
@@ -404,7 +386,6 @@
 
     <Button
         android:id="@+id/unexploredImageBtn"
-        android:visibility="invisible"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginStart="20dp"

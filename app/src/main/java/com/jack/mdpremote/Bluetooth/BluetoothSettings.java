@@ -75,11 +75,11 @@ public class BluetoothSettings extends AppCompatActivity {
 
         //Broadcasts when bond state changes (Pairing)
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
-        registerReceiver(mBroadcastReceiver4, filter);
+        registerReceiver(bondReceiver, filter);
 
         //Broadcasts when bluetooth state changes (connected, disconnected etc) custom receiver
         IntentFilter filter2 = new IntentFilter("ConnectionStatus");
-        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver5, filter2);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mainReceiver, filter2);
 
         //New Devices List View event handler
         otherDevicesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -162,17 +162,17 @@ public class BluetoothSettings extends AppCompatActivity {
                         compoundButton.setChecked(true);//need this for cases where the user tapped outside of the pop up box during allow/deny prompt
 
                         IntentFilter BTIntent = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-                        registerReceiver(mBroadcastReceiver1, BTIntent); //intercepts changes to bluetooth status and logs them
+                        registerReceiver(stateReceiver, BTIntent); //intercepts changes to bluetooth status and logs them
 
                         IntentFilter discoverIntent = new IntentFilter(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
-                        registerReceiver(mBroadcastReceiver2, discoverIntent); //intercepts changes to discoverability status and logs them
+                        registerReceiver(discoverabilityReceiver, discoverIntent); //intercepts changes to discoverability status and logs them
                     }
                     if (mBluetoothAdapter.isEnabled()) {
                         Log.d(TAG, "enableDisableBT: disabling Bluetooth");
                         mBluetoothAdapter.disable();
 
                         IntentFilter BTIntent = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-                        registerReceiver(mBroadcastReceiver1, BTIntent); //intercepts changes to bluetooth status and logs them
+                        registerReceiver(stateReceiver, BTIntent); //intercepts changes to bluetooth status and logs them
                     }
 
                 }
@@ -196,11 +196,10 @@ public class BluetoothSettings extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        //added these 3 lines
         connStatusTextView = findViewById(R.id.connStatusTextView);
         connStatus = "None";
         sharedPreferences = getApplicationContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
-        //
+
         if (sharedPreferences.contains("connStatus"))
             connStatus = sharedPreferences.getString("connStatus", "");
 
@@ -208,9 +207,9 @@ public class BluetoothSettings extends AppCompatActivity {
 
         //Progress dialog to show when the bluetooth is disconnected
         myDialog = new ProgressDialog(BluetoothSettings.this);
-        myDialog.setMessage("Waiting for other device to reconnect...");
+        myDialog.setMessage("Trying to reconnect..");
         myDialog.setCancelable(false);
-        myDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+        myDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -234,14 +233,14 @@ public class BluetoothSettings extends AppCompatActivity {
 
                 mBluetoothAdapter.startDiscovery();
                 IntentFilter discoverDevicesIntent = new IntentFilter(BluetoothDevice.ACTION_FOUND); //ACTION_FOUND: remote device discovered
-                registerReceiver(mBroadcastReceiver3, discoverDevicesIntent);
+                registerReceiver(unpairedReceiver, discoverDevicesIntent);
             } else if (!mBluetoothAdapter.isDiscovering()) {
                 //Check bluetooth permissions in manifest
                 checkBTPermissions();
 
                 mBluetoothAdapter.startDiscovery();
                 IntentFilter discoverDevicesIntent = new IntentFilter(BluetoothDevice.ACTION_FOUND); //ACTION_FOUND: remote device discovered
-                registerReceiver(mBroadcastReceiver3, discoverDevicesIntent);
+                registerReceiver(unpairedReceiver, discoverDevicesIntent);
             }
             //get a list of bonded devices. This does not require any discovery
             mPairedBTDevices.clear();
@@ -253,18 +252,10 @@ public class BluetoothSettings extends AppCompatActivity {
                 mPairedDevlceListAdapter = new DeviceListAdapter(this, R.layout.device_adapter_view, mPairedBTDevices);
                 pairedDevicesListView.setAdapter(mPairedDevlceListAdapter); //set adapter to the list
             }
-          /*  if(pairedDevices.size() <= 0){
-                findViewById(R.id.textView3).setVisibility(View.GONE); //View.Visible
-            }*/
 
         }
     }
 
-    /**
-     * This method is required for all devices running API23+
-     * Android must programatically check the permissions for Bluetooth. Putting the proper permissions in the manifest is not enough.
-     * Note: This will only execute on versions > LOLLIPOP because it is not needed otherwise
-     */
     private void checkBTPermissions() {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
             int permissionCheck = this.checkSelfPermission("Manifest.permission.ACCESS_FINE_LOCATION");
@@ -278,8 +269,7 @@ public class BluetoothSettings extends AppCompatActivity {
         }
     }
 
-    // Create a BroadcastReceiver for turning on/off bluetooth
-    private final BroadcastReceiver mBroadcastReceiver1 = new BroadcastReceiver() {
+    private final BroadcastReceiver stateReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (action.equals(mBluetoothAdapter.ACTION_STATE_CHANGED)) {
@@ -287,18 +277,18 @@ public class BluetoothSettings extends AppCompatActivity {
 
                 switch (state) {
                     case BluetoothAdapter.STATE_OFF:
-                        Log.d(TAG, "mBroadcastReceiver1: STATE OFF");
+                        Log.d(TAG, "stateReceiver: STATE OFF");
                         break;
                     case BluetoothAdapter.STATE_TURNING_OFF:
-                        Log.d(TAG, "mBroadcastReceiver1: STATE TURNING OFF");
+                        Log.d(TAG, "stateReceiver: STATE TURNING OFF");
                         break;
                     case BluetoothAdapter.STATE_ON:
-                        Log.d(TAG, "mBroadcastReceiver1: STATE ON");
+                        Log.d(TAG, "stateReceiver: STATE ON");
 
                         break;
                     //BLUETOOTH TURNING ON STATE
                     case BluetoothAdapter.STATE_TURNING_ON:
-                        Log.d(TAG, "mBroadcastReceiver1: STATE TURNING ON");
+                        Log.d(TAG, "stateReceiver: STATE TURNING ON");
                         break;
                 }
             }
@@ -308,7 +298,7 @@ public class BluetoothSettings extends AppCompatActivity {
     /**
      * Broadcast Receiver for Bluetooth Discoverability mode on/off or expiry
      */
-    private final BroadcastReceiver mBroadcastReceiver2 = new BroadcastReceiver() {
+    private final BroadcastReceiver discoverabilityReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (action.equals(mBluetoothAdapter.ACTION_SCAN_MODE_CHANGED)) {
@@ -316,19 +306,19 @@ public class BluetoothSettings extends AppCompatActivity {
 
                 switch (mode) {
                     case BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE:
-                        Log.d(TAG, "mBroadcastReceiver2: Discoverability Enabled.");
+                        Log.d(TAG, "discoverabilityReceiver: Discoverability Enabled.");
                         break;
                     case BluetoothAdapter.SCAN_MODE_CONNECTABLE:
-                        Log.d(TAG, "mBroadcastReceiver2: Discoverability Disabled. Able to receive connections.");
+                        Log.d(TAG, "discoverabilityReceiver: Discoverability Disabled. Able to receive connections.");
                         break;
                     case BluetoothAdapter.SCAN_MODE_NONE:
-                        Log.d(TAG, "mBroadcastReceiver2: Discoverability Disabled. Not able to receive connections.");
+                        Log.d(TAG, "discoverabilityReceiver: Discoverability Disabled. Not able to receive connections.");
                         break;
                     case BluetoothAdapter.STATE_CONNECTING:
-                        Log.d(TAG, "mBroadcastReceiver2: Connecting...");
+                        Log.d(TAG, "discoverabilityReceiver: Connecting...");
                         break;
                     case BluetoothAdapter.STATE_CONNECTED:
-                        Log.d(TAG, "mBroadcastReceiver2: Connected.");
+                        Log.d(TAG, "discoverabilityReceiver: Connected.");
                         break;
                 }
             }
@@ -339,7 +329,7 @@ public class BluetoothSettings extends AppCompatActivity {
      * Broadcast receiver for listing devices that are not yet paired
      * Executed by toggleButtonScan
      */
-    private BroadcastReceiver mBroadcastReceiver3 = new BroadcastReceiver() {
+    private BroadcastReceiver unpairedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
@@ -360,25 +350,24 @@ public class BluetoothSettings extends AppCompatActivity {
      * Broadcast receiver for bluetooth bonding changes
      * Only logging here to track the events, not other action needed
      */
-    private BroadcastReceiver mBroadcastReceiver4 = new BroadcastReceiver() {
+    private BroadcastReceiver bondReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
 
             if (action.equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED)) {
                 BluetoothDevice mDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                //3 cases
-                //case 1: when the device is already bonded
+
                 if (mDevice.getBondState() == BluetoothDevice.BOND_BONDED) {
                     Log.d(TAG, "BOND_BONDED.");
                     Toast.makeText(BluetoothSettings.this, "Successfully paired with " + mDevice.getName(), Toast.LENGTH_SHORT).show();
                     mBTDevice = mDevice; //assign paired device to global variable
                 }
-                //case 2: Creating a new bond
+
                 if (mDevice.getBondState() == BluetoothDevice.BOND_BONDING) {
                     Log.d(TAG, "BOND_BONDING.");
                 }
-                //case 1: Breaking a bond
+
                 if (mDevice.getBondState() == BluetoothDevice.BOND_NONE) {
                     Log.d(TAG, "BOND_NONE.");
                 }
@@ -390,12 +379,9 @@ public class BluetoothSettings extends AppCompatActivity {
      * Broadcast receiver for bluetooth connection status
      * NOTE: failed to connect to device will display a toast message which is found in BluetoothConnectionService ConnectThread
      */
-    private BroadcastReceiver mBroadcastReceiver5 = new BroadcastReceiver() {
+    private BroadcastReceiver mainReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            //final String action = intent.getAction();
-            //BluetoothDevice mDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-
 
             BluetoothDevice mDevice = intent.getParcelableExtra("Device");
             String status = intent.getStringExtra("Status");
@@ -411,16 +397,16 @@ public class BluetoothSettings extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                Log.d(TAG, "mBroadcastReceiver5: Device now connected to " + mDevice.getName());
+                Log.d(TAG, "mainReceiver: Device now connected to " + mDevice.getName());
                 Toast.makeText(BluetoothSettings.this, "Device now connected to " + mDevice.getName(), Toast.LENGTH_LONG).show();
                 editor.putString("connStatus", mDevice.getName());
                 connStatusTextView.setText(mDevice.getName());
             } else if (status.equals("disconnected")) {
-                Log.d(TAG, "mBroadcastReceiver5: Disconnected from " + mDevice.getName());
+                Log.d(TAG, "mainReceiver: Disconnected from " + mDevice.getName());
                 Toast.makeText(BluetoothSettings.this, "Disconnected from " + mDevice.getName(), Toast.LENGTH_LONG).show();
                 //start accept thread and wait on the SAME device again
                 mBluetoothConnection = new BluetoothConnectionService(BluetoothSettings.this);
-                mBluetoothConnection.startAcceptThread();
+                mBluetoothConnection.connectionLost(mBTDevice);
 
                 // For displaying disconnected for all page
                 sharedPreferences = getApplicationContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
@@ -434,7 +420,7 @@ public class BluetoothSettings extends AppCompatActivity {
                 try {
                     myDialog.show();
                 } catch (Exception e) {
-                    Log.d(TAG, "BluetoothSettings: mBroadcastReceiver5 Dialog show failure");
+                    Log.d(TAG, "BluetoothSettings: mainReceiver Dialog show failure");
                 }
 
 
@@ -463,11 +449,15 @@ public class BluetoothSettings extends AppCompatActivity {
         super.onDestroy();
         //close broadcast receivers when activity is finishing/destroyed
         try {
-            unregisterReceiver(mBroadcastReceiver1); //try catch for cases where bluetooth adapter =null on devices that dont support bluetooth
-            unregisterReceiver(mBroadcastReceiver2);
-            unregisterReceiver(mBroadcastReceiver3);
-            unregisterReceiver(mBroadcastReceiver4);
-            LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver5);
+//            unregisterReceiver(stateReceiver); //try catch for cases where bluetooth adapter =null on devices that dont support bluetooth
+//            unregisterReceiver(discoverabilityReceiver);
+//            unregisterReceiver(unpairedReceiver);
+//            unregisterReceiver(bondReceiver);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(discoverabilityReceiver);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(unpairedReceiver);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(bondReceiver);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(stateReceiver);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(mainReceiver);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }

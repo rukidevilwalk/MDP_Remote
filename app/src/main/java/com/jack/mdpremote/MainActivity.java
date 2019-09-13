@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         directionDropdown = findViewById(R.id.directionDropdown);
 
         sendReceiveMenuItem = findViewById(R.id.sendReceiveMenuItem);
-        //getMapMenuItem = findViewById(R.id.getMapMenuItem);
+        getMapMenuItem = findViewById(R.id.getMapMenuItem);
         bluetoothMenuItem = findViewById(R.id.bluetoothMenuItem);
         connStatusTextView = findViewById(R.id.connStatusTextView);
 
@@ -377,16 +377,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         phoneTiltSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if (isChecked) {
-                    compoundButton.setText("TILT ON");
-                } else {
-                    compoundButton.setText("TILT OFF");
-                }
+
                 if (gridMap.getAutoUpdate()) {
                     updateStatus("SET TO MANUAL MODE FIRST");
                     phoneTiltSwitch.setChecked(false);
+                    compoundButton.setText("TILT OFF");
                 } else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
                     if (phoneTiltSwitch.isChecked()) {
+                        compoundButton.setText("TILT ON");
                         showToast("Tilt motion control: ON");
                         phoneTiltSwitch.setPressed(true);
 
@@ -405,10 +403,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         }
                         //stops the runnable loop
                         sensorHandler.removeCallbacks(sensorDelay);
+                        compoundButton.setText("TILT OFF");
                     }
                 } else {
                     updateStatus("SET STARTING POINT FIRST");
                     phoneTiltSwitch.setChecked(false);
+                    compoundButton.setText("TILT OFF");
                 }
             }
         });
@@ -512,6 +512,22 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             public void onClick(View view) {
                 showLog("Clicked manualAutoToggleBtn");
                 if (manualAutoToggleBtn.getText().equals("AUTO")) {
+
+                    // Turn off tilt sensor if it's on
+                    if (phoneTiltSwitch.isChecked()){
+                        phoneTiltSwitch.setChecked(false);
+                        showToast("Tilt motion control: OFF");
+                        try {
+                            //unregister when button clicked to save battery since the sensor is very power consuming.
+                            mSensorManager.unregisterListener(MainActivity.this);
+                        } catch (IllegalArgumentException e) {
+                            e.printStackTrace();
+                        }
+
+                        sensorHandler.removeCallbacks(sensorDelay);
+                    }
+
+
                     try {
                         gridMap.setAutoUpdate(true);
                         autoUpdate = true;
@@ -522,6 +538,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     }
                     showToast("AUTO mode");
                 } else if (manualAutoToggleBtn.getText().equals("MANUAL")) {
+
+
+
                     try {
                         gridMap.setAutoUpdate(false);
                         autoUpdate = false;
@@ -556,8 +575,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         //Progress dialog to show when the bluetooth is disconnected
         myDialog = new ProgressDialog(MainActivity.this);
-        myDialog.setMessage("Waiting for other device to reconnect...");
-        myDialog.setCancelable(false);
+        myDialog.setMessage("Trying to reconnect..");
+        myDialog.setCancelable(true);
         myDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -591,10 +610,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 intent = new Intent(MainActivity.this, SendReceive.class);
                 editor.putString("receivedText", messageReceivedTextView.getText().toString());
                 break;
-//            case R.id.getMapMenuItem:
-//                showToast("Get Map Information selected");
-//                intent = new Intent(MainActivity.this, MapInformation.class);
-//                break;
+            case R.id.getMapMenuItem:
+                showToast("Get Map Information selected");
+                intent = new Intent(MainActivity.this, MapInformation.class);
+                break;
 
             default:
                 showToast("onOptionsItemSelected has reached default");
@@ -674,7 +693,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         robotStatusTextView.setText(message);
     }
 
-    // print message on message sent
+    // Sends algo the coords for SP/WP after setting it on the map
     public static void sendMessage(String name, int x, int y) throws JSONException {
         showLog("Entering sendMessage");
         sharedPreferences();
@@ -696,7 +715,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
         editor.putString("sentText", sharedPreferences.getString("sentText", "") + "\n " + message);
         editor.commit();
-        sendMessage("X" + String.valueOf(jsonObject));
+        sendMessage("Algo" + (jsonObject));
         showLog("Exiting sendMessage");
     }
 
@@ -736,7 +755,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     // for bluetooth
-    private BroadcastReceiver mBroadcastReceiver5 = new BroadcastReceiver() {
+    private BroadcastReceiver mainReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             BluetoothDevice mDevice = intent.getParcelableExtra("Device");
@@ -752,16 +771,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     e.printStackTrace();
                 }
 
-                Log.d(TAG, "mBroadcastReceiver5: Device now connected to " + mDevice.getName());
+                Log.d(TAG, "mainReceiver: Device now connected to " + mDevice.getName());
                 Toast.makeText(MainActivity.this, "Device now connected to " + mDevice.getName(), Toast.LENGTH_LONG).show();
                 editor.putString("connStatus", mDevice.getName());
                 connStatusTextView.setText(mDevice.getName());
             } else if (status.equals("disconnected")) {
-                Log.d(TAG, "mBroadcastReceiver5: Disconnected from " + mDevice.getName());
+                Log.d(TAG, "mainReceiver: Disconnected from " + mDevice.getName());
                 Toast.makeText(MainActivity.this, "Disconnected from " + mDevice.getName(), Toast.LENGTH_LONG).show();
                 //start accept thread and wait on the SAME device again
                 mBluetoothConnection = new BluetoothConnectionService(MainActivity.this);
-                mBluetoothConnection.startAcceptThread();
+                mBluetoothConnection.connectionLost(mBTDevice);
 
                 // For displaying disconnected for all page
                 editor.putString("connStatus", "None");
@@ -939,7 +958,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onDestroy();
         try {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);
-            LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver5);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(mainReceiver);
             //unregister sensor in case not turned off.
             mSensorManager.unregisterListener(this);
         } catch (IllegalArgumentException e) {
@@ -952,7 +971,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onPause() {
         super.onPause();
         try {
-            LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver5);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(mainReceiver);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
@@ -965,7 +984,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         try {
             //Broadcasts when bluetooth state changes (connected, disconnected etc) custom receiver
             IntentFilter filter2 = new IntentFilter("ConnectionStatus");
-            LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver5, filter2);
+            LocalBroadcastManager.getInstance(this).registerReceiver(mainReceiver, filter2);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
