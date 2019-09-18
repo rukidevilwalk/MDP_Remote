@@ -349,7 +349,7 @@ public class GridMap extends View {
         row = this.convertRow(row);
         cells[col][row].setType("waypoint");
 
-        MainActivity.sendMessage("waypoint", waypointCoord[0], waypointCoord[1]);
+        MainActivity.setSPWP("1", waypointCoord[0]-1, waypointCoord[1]-1);
         showLog("Exiting setWaypointCoord");
     }
 
@@ -808,7 +808,7 @@ public class GridMap extends View {
 
         JSONArray mapInfoJsonArray;
         JSONObject mapInfoJsonObject;
-        String message, exploredString;
+        String exploredString;
 
 
         if (mapInformation == null)
@@ -893,37 +893,8 @@ public class GridMap extends View {
 
                     }
 
-
-                    // set waypoint cells
-//                    int[] waypointCoord = this.getWaypointCoord();
-//                    if (waypointCoord[0] >= 1 && waypointCoord[1] >= 1)
-//                        cells[waypointCoord[0]][20 - waypointCoord[1]].setType("waypoint");
                     break;
 
-                // if it contains robot array
-//                case "robot":
-//                    if (canDrawRobot)
-//                        this.setOldRobotCoord(curCoord[0], curCoord[1]);
-//                    mapInfoJsonArray = mapInformation.getJSONArray("robot");
-//                    mapInfoJsonObject = mapInfoJsonArray.getJSONObject(0);
-//
-//                    // remove old robot color
-//                    for (int row = ROW - 1; row >= 0; row--)
-//                        for (int col = 1; col <= COL; col++)
-//                            cells[col][row].setType("unexplored");
-//
-//                    //this.setStartCoord(mapInfoJsonObject.getInt("x"), mapInfoJsonObject.getInt("y"));
-//                    this.setCurCoord(mapInfoJsonObject.getInt("x"), mapInfoJsonObject.getInt("y"), mapInfoJsonObject.getString("direction"));
-//                    canDrawRobot = true;
-//                    break;
-
-                // set waypoint cells
-//                case "waypoint":
-//                    mapInfoJsonArray = mapInformation.getJSONArray("waypoint");
-//                    mapInfoJsonObject = mapInfoJsonArray.getJSONObject(0);
-//                    this.setWaypointCoord(mapInfoJsonObject.getInt("x"), mapInfoJsonObject.getInt("y"));
-//                    setWaypointStatus = true;
-//                    break;
 
                 // if it contains obstacle array
 //                case "obstacle":
@@ -947,30 +918,10 @@ public class GridMap extends View {
                     }
                     break;
 
-                // if it contains move array
-//                case "move":
-//                    mapInfoJsonArray = mapInformation.getJSONArray("move");
-//                    mapInfoJsonObject = mapInfoJsonArray.getJSONObject(0);
-//                    if (canDrawRobot)
-//                        moveRobot(mapInfoJsonObject.getString("direction"));
-//                    message = "moveDirection: " + mapInfoJsonObject.getString("direction");
-//                    break;
-
-                // if it contains robot status
-//                case "status":
-//                    mapInfoJsonArray = mapInformation.getJSONArray("status");
-//                    mapInfoJsonObject = mapInfoJsonArray.getJSONObject(0);
-//                    printRobotStatus(mapInfoJsonObject.getString("status"));
-//                    message = "status: " + mapInfoJsonObject.getString("status");
-//                    break;
-
                 default:
-                    message = "Unintended default for JSONObject";
                     break;
             }
-            /*
-            if (!message.equals("updateMapInformation Default message"))
-                MainActivity.receiveMessage(message);*/
+
         }
 
         showLog("Exiting updateMapInformation");
@@ -1032,11 +983,8 @@ public class GridMap extends View {
                 // set start coordinate status to false
                 startCoordStatus = false;
                 // print out the message sent to other device
-                try {
-                    MainActivity.sendMessage("starting", column, row);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                MainActivity.setSPWP("0", column-1, row-1);
+
                 // update the axis on the screen
                 updateRobotAxis(column, row, "up");
                 // if the button is checked, uncheck it

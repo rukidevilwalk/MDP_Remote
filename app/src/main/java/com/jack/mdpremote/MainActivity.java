@@ -666,8 +666,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
     // for refreshing all the label in the screen
     private void refreshLabel() {
-        xAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[0]));
-        yAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[1]));
+        xAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[0]-1));
+        yAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[1]-1));
         setDirectionDropdown();
 
     }
@@ -694,28 +694,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     // Sends algo the coords for SP/WP after setting it on the map
-    public static void sendMessage(String name, int x, int y) throws JSONException {
+    public static void setSPWP(String type, int x, int y)  {
         showLog("Entering sendMessage");
         sharedPreferences();
 
-        JSONObject jsonObject = new JSONObject();
         String message;
+        message = type + x + y;
 
-        switch (name) {
-            case "starting":
-            case "waypoint":
-                jsonObject.put(name, name);
-                jsonObject.put("x", x);
-                jsonObject.put("y", y);
-                message = name + " (" + x + "," + y + ")";
-                break;
-            default:
-                message = "Unexpected default for sendMessage: " + name;
-                break;
-        }
         editor.putString("sentText", sharedPreferences.getString("sentText", "") + "\n " + message);
         editor.commit();
-        sendMessage("Algo" + (jsonObject));
+        sendMessage("Algo" + message);
         showLog("Exiting sendMessage");
     }
 

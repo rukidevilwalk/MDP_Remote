@@ -147,16 +147,12 @@ public class BluetoothConnectionService {
     }
 
     public synchronized void connect(BluetoothDevice device) {
-
-        // Cancel any thread attempting to make a connection
-      //  if (mState == ConnectionConstants.STATE_CONNECTING) {
-            if (mConnectThread != null) {
-                mConnectThread.cancel();
-                mConnectThread = null;
-            }
-       // }
-
         // Cancel any thread currently running a connection
+        if (mConnectThread != null) {
+            mConnectThread.cancel();
+            mConnectThread = null;
+        }
+
         if (mConnectedThread != null) {
             mConnectedThread.cancel();
             mConnectedThread = null;
@@ -168,7 +164,7 @@ public class BluetoothConnectionService {
         }
 
         Log.e(TAG, "Starting new connect thread with previous device.");
-        // Start the thread to connect with the given device
+
         mConnectThread = new ConnectThread(device,myUUID);
         mConnectThread.start();
 
@@ -191,7 +187,7 @@ public class BluetoothConnectionService {
 
             //Get a BluetoothSocket for a connection with the given BluetoothDevice
             try {
-                Log.d(TAG, "ConnectThread: Trying to create InsecureRfcommSocket using Default UUID: " + deviceUUID);
+                Log.d(TAG, "ConnectThread: Trying to create InsecureRfcommSocket using UUID: " + deviceUUID);
                 tmp = device.createRfcommSocketToServiceRecord(deviceUUID);
             } catch (IOException e) {
                 Log.e(TAG, "ConnectThread: Could not create InsecureRfcommSocket " + e.getMessage());
@@ -202,15 +198,15 @@ public class BluetoothConnectionService {
         public void run() {
 
             Log.d(TAG, "RUN: mConnectThread");
-            //Always cancel Discovery because it will slow down a connection
-            //mBluetoothAdapter.cancelDiscovery();
+
+            mBluetoothAdapter.cancelDiscovery();
 
             try {
-                //Make a connection to the BluetoothSocket
-                //This is a blocking call and will only return upon successful connection or exception
+
                 mSocket.connect();
+
             } catch (IOException e) {
-                //close the socket if there is an exception
+
                 try {
                     mSocket.close();
                     Log.d(TAG, "RUN: ConnectThread socket closed.");
@@ -221,7 +217,7 @@ public class BluetoothConnectionService {
                 Log.d(TAG, "RUN: ConnectThread: could not connect to UUID." + myUUID);
 
 
-
+                // Enable for auto reconnection
                 connectionLost(mDevice);
                 return;
             }
@@ -430,6 +426,6 @@ public class BluetoothConnectionService {
             mReconnectThread = null;
         }
 
-  Log.e(TAG,"Stop all threads");
+        Log.e(TAG,"Stop all threads");
     }
 }
