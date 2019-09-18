@@ -295,7 +295,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         moveForwardImageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showLog("Clicked moveForwardImageBtn");
                 if (gridMap.getAutoUpdate())
                     updateStatus("SET TO MANUAL MODE FIRST");
                 else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
@@ -305,8 +304,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         updateStatus("MOVE: FORWARD");
                     else
                         updateStatus("MOVE: FORWARD IS BLOCKED");
-                   // sendMessage("AW1|");
-                    sendMessage("Arduinoforward");
+                    sendMessage("forward");
                 } else
                     updateStatus("SET STARTING POINT FIRST");
                 showLog("Exiting moveForwardImageBtn");
@@ -317,15 +315,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         turnRightImageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showLog("Clicked turnRightImageBtn");
                 if (gridMap.getAutoUpdate())
                     updateStatus("SET TO MANUAL MODE FIRST'");
                 else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
                     gridMap.moveRobot("right");
                     refreshLabel();
                     updateStatus("TURN: RIGHT");
-                    //sendMessage("AD1|");
-                    sendMessage("Arduinoright");
+                    sendMessage("right");
                 } else
                     updateStatus("SET STARTING POINT FIRST");
                 showLog("Exiting turnRightImageBtn");
@@ -336,7 +332,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         moveBackwardImageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showLog("Clicked moveBackwardImageBtn");
                 if (gridMap.getAutoUpdate())
                     updateStatus("SET TO MANUAL MODE FIRST'");
                 else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
@@ -346,8 +341,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         updateStatus("MOVE: REVERSE");
                     else
                         updateStatus("MOVE: REVERSE IS BLOCKED");
-                    //sendMessage("AS1|");
-                    sendMessage("Arduinoback");
+                    sendMessage("reverse");
                 } else
                     updateStatus("SET STARTING POINT FIRST");
                 showLog("Exiting moveBackwardImageBtn");
@@ -358,15 +352,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         turnLeftImageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showLog("Clicked turnLeftImageBtn");
                 if (gridMap.getAutoUpdate())
                     updateStatus("SET TO MANUAL MODE FIRST");
                 else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
                     gridMap.moveRobot("left");
                     refreshLabel();
                     updateStatus("TURN: LEFT");
-                   // sendMessage("AA1|");
-                    sendMessage("Arduinoleft");
+                    sendMessage("left");
                 } else
                     updateStatus("SET STARTING POINT FIRST");
                 showLog("Exiting turnLeftImageBtn");
@@ -914,27 +906,27 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 showLog("Sensor Move Forward Detected");
                 gridMap.moveRobot("forward");
                 refreshLabel();
-                sendMessage("AW1|");
+                sendMessage("forward");
             } else if (y > 2) {
                 //move backward
                 showLog("Sensor Move Backward Detected");
                 gridMap.moveRobot("back");
                 refreshLabel();
-                sendMessage("AS1|");
+                sendMessage("reverse");
 
             } else if (x > 2) {
                 //move left
                 showLog("Sensor Move Left Detected");
                 gridMap.moveRobot("left");
                 refreshLabel();
-                sendMessage("AA1|");
+                sendMessage("left");
 
             } else if (x < -2) {
                 //move right
                 showLog("Sensor Move Right Detected");
                 gridMap.moveRobot("right");
                 refreshLabel();
-                sendMessage("AD1|");
+                sendMessage("right");
             }
         }
         //set flag back to false so that it wont execute the code above until 1-2 seconds later

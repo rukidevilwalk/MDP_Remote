@@ -811,7 +811,7 @@ public class GridMap extends View {
         String exploredString;
 
 
-        if (mapInformation == null)
+        if (mapInformation == null || mapInformation.names() == null  )
             return;
 
         for (int i = 0; i < mapInformation.names().length(); i++) {
