@@ -222,6 +222,7 @@ public class BluetoothConnectionService {
                 return;
             }
 
+            //reconnecting  = false;
             Log.d(TAG, "RUN: ConnectThread connected.");
             connected(mSocket, mDevice);
 

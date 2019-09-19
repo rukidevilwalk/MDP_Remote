@@ -544,7 +544,8 @@ public class GridMap extends View {
 
     // set image coordinate
     private void setImageCoordinate(int col, int row, String imageType) {
-
+        col+=1;
+        row+=1;
         String[] imageCoord = new String[3];
         imageCoord[0] = String.valueOf(col);
         imageCoord[1] = String.valueOf(row);
@@ -557,8 +558,9 @@ public class GridMap extends View {
             if (this.getImageCoord().get(i)[0].equals(imageCoord[0]) && this.getImageCoord().get(i)[1].equals(imageCoord[1]) && this.getImageCoord().get(i)[1].equals(imageCoord[1]))
                 update = false;
 
-            if (!update)
-        showLog("false");
+        if (!update)
+            showLog("false");
+
         // Check if image coord is new, add the new image and print out the coord
         if (update) {
             showLog("Cell type: " + cells[col][20-row].type);
