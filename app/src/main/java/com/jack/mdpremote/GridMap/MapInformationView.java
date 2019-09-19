@@ -22,7 +22,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 
 
-public class GridView extends View {
+public class MapInformationView extends View {
 
     // declarations of attributes
     // static variable is created only one in the program at the time of loading of class
@@ -48,13 +48,13 @@ public class GridView extends View {
     private Paint arrowColor = new Paint();         // blue = arrow front position
     private Paint fastestPathColor = new Paint();   // magenta = fastest path position
 
-    public GridView(Context context) {
+    public MapInformationView(Context context) {
         super(context);
         init(null);
     }
 
     // constructor of grid map
-    public GridView(Context context, @Nullable AttributeSet attrs) {
+    public MapInformationView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(attrs);
         blackPaint.setStyle(Paint.Style.FILL_AND_STROKE);   // for lines, etc

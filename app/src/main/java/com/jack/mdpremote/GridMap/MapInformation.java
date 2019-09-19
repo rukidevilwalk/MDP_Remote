@@ -24,13 +24,12 @@ public class MapInformation extends AppCompatActivity {
     String mapString;
     String connStatus;
     JSONObject mapJsonObject;
-    GridView gridView;
+    MapInformationView mapInformationView;
     Button obstacleBtn;
     SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        showLog("Entering onCreateView");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_information);
 
@@ -43,17 +42,16 @@ public class MapInformation extends AppCompatActivity {
         // get received map strings from main activity
         if (sharedPreferences.contains("mapJsonObject")) {
             mapString = sharedPreferences.getString("mapJsonObject", "");
-            showLog(mapString);
+            Log.d(TAG, mapString);
+
             try {
                 mapJsonObject = new JSONObject(mapString);
-                showLog("mapJsonObject try success");
             } catch (JSONException e) {
                 e.printStackTrace();
-                showLog("mapJsonObject try fail");
             }
-            gridView = new GridView(this);
-            gridView = findViewById(R.id.mapInformationView);
-            gridView.mapJsonObject = mapJsonObject;
+            mapInformationView = new MapInformationView(this);
+            mapInformationView = findViewById(R.id.mapInformationView);
+            mapInformationView.mapJsonObject = mapJsonObject;
         }
 
         obstacleBtn = findViewById(R.id.obstacleBtn);
@@ -63,13 +61,13 @@ public class MapInformation extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (obstacleBtn.getText().equals("Show Explored")) {
-                    gridView.plotObstacle = true;
+                    mapInformationView.plotObstacle = true;
                     Toast.makeText(getApplicationContext(), "Showing obstacle cells", Toast.LENGTH_SHORT).show();
-                    gridView.invalidate();
+                    mapInformationView.invalidate();
                 } else if (obstacleBtn.getText().equals("Show Obstacle")) {
-                    gridView.plotObstacle = false;
+                    mapInformationView.plotObstacle = false;
                     Toast.makeText(getApplicationContext(), "Showing explored cells", Toast.LENGTH_SHORT).show();
-                    gridView.invalidate();
+                    mapInformationView.invalidate();
                 }
             }
         });
@@ -83,11 +81,7 @@ public class MapInformation extends AppCompatActivity {
         if (sharedPreferences.contains("connStatus"))
             connStatus = sharedPreferences.getString("connStatus", "");
         connStatusTextView.setText(connStatus);
-        showLog("Exiting onCreateView");
+
     }
 
-    // show log message
-    private void showLog(String message) {
-        Log.d(TAG, message);
-    }
 }

@@ -28,7 +28,7 @@
 
     <view
         android:id="@+id/mapInformationView"
-        class="com.jack.mdpremote.GridMap.GridView"
+        class="com.jack.mdpremote.GridMap.MapInformationView"
         android:layout_width="500dp"
         android:layout_height="650dp"
         android:layout_marginEnd="25dp"

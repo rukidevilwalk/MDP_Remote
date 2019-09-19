@@ -5,10 +5,10 @@
     <string name="explore_button">EXPLORE</string>
     <string name="fastest_time">Fastest Time:</string>
     <string name="fastest_button">FASTEST</string>
-    <string name="robot_status_title">STATUS</string>
-    <string name="reset_map_button">RESET</string>
-    <string name="set_waypoint_button">WP</string>
-    <string name="set_start_point_button">SP</string>
+    <string name="robot_status_title">Robot Status</string>
+    <string name="reset_map_button">Reset Map</string>
+    <string name="set_waypoint_button">Waypoint</string>
+    <string name="set_start_point_button">Startpoint</string>
     <string name="message_sent">Message Sent</string>
     <string name="message_received">Message Received</string>
 </resources>
