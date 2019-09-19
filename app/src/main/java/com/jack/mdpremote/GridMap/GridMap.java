@@ -962,10 +962,10 @@ public class GridMap extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         showLog("Entering onTouchEvent");
-        if (event.getAction() == MotionEvent.ACTION_DOWN && this.getAutoUpdate() == false) {     // new touch started
+        if (event.getAction() == MotionEvent.ACTION_DOWN && this.getAutoUpdate() == false) {
             int column = (int) (event.getX() / cellSize);
             int row = this.convertRow((int) (event.getY() / cellSize)); // convert to screen coordinate
-            // for toggling the button if it is set
+      
             ToggleButton setStartPointToggleBtn = ((Activity) this.getContext()).findViewById(R.id.setStartPointToggleBtn);
             ToggleButton setWaypointToggleBtn = ((Activity) this.getContext()).findViewById(R.id.setWaypointToggleBtn);
 
