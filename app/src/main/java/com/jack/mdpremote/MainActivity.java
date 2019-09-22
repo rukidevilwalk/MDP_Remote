@@ -233,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     timerHandler.removeCallbacks(timerRunnableExplore);
                 } else if (exploreToggleBtn.getText().equals("STOP")) {
                     showToast("Exploration timer start!");
-                    sendMessage("Explore");
+                    sendMessage("Algo:start0");
                     exploreTimer = System.currentTimeMillis();
                     timerHandler.postDelayed(timerRunnableExplore, 0);
                 } else {
@@ -268,7 +268,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     timerHandler.removeCallbacks(timerRunnableFastest);
                 } else if (fastestToggleBtn.getText().equals("STOP")) {
                     showToast("Fastest timer start!");
-                    sendMessage("Fastest");
+                    sendMessage("Algo:start1");
                     fastestTimer = System.currentTimeMillis();
                     timerHandler.postDelayed(timerRunnableFastest, 0);
                 } else
@@ -677,7 +677,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     // for refreshing the direction of the robot
     public void refreshDirection(String direction) {
         gridMap.setRobotDirection(direction);
-        sendMessage("Direction is set to " + direction);
+		if (!(direction.equals("None")))
+        sendMessage("Algo:direction" + direction);
     }
 
     // for updating the displaying for robot status

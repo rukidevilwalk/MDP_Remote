@@ -352,7 +352,7 @@ public class GridMap extends View {
         row = this.convertRow(row);
         cells[col][row].setType("waypoint");
 
-        MainActivity.setSPWP("1", waypointCoord[0]-1, waypointCoord[1]-1);
+        MainActivity.setSPWP(":set1", waypointCoord[0]-1, waypointCoord[1]-1);
         showLog("Exiting setWaypointCoord");
     }
 
@@ -965,7 +965,7 @@ public class GridMap extends View {
         if (event.getAction() == MotionEvent.ACTION_DOWN && this.getAutoUpdate() == false) {
             int column = (int) (event.getX() / cellSize);
             int row = this.convertRow((int) (event.getY() / cellSize)); // convert to screen coordinate
-      
+
             ToggleButton setStartPointToggleBtn = ((Activity) this.getContext()).findViewById(R.id.setStartPointToggleBtn);
             ToggleButton setWaypointToggleBtn = ((Activity) this.getContext()).findViewById(R.id.setWaypointToggleBtn);
 
@@ -988,7 +988,7 @@ public class GridMap extends View {
                 // set start coordinate status to false
                 startCoordStatus = false;
                 // print out the message sent to other device
-                MainActivity.setSPWP("0", column-1, row-1);
+                MainActivity.setSPWP(":set0", column-1, row-1);
 
                 // update the axis on the screen
                 updateRobotAxis(column, row, "up");
