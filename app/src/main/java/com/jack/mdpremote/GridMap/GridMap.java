@@ -718,16 +718,16 @@ public class GridMap extends View {
                         imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.circle);
                         break;
                     case "up":
-                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.arrow_up);
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.up);
                         break;
                     case "right":
-                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.arrow_right);
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.right);
                         break;
                     case "down":
-                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.arrow_down);
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.down);
                         break;
                     case "left":
-                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.arrow_left);
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.left);
                         break;
                     default:
                         break;
