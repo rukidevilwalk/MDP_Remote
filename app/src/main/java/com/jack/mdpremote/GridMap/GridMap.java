@@ -352,7 +352,7 @@ public class GridMap extends View {
         row = this.convertRow(row);
         cells[col][row].setType("waypoint");
 
-        MainActivity.setSPWP(":set1", waypointCoord[0]-1, waypointCoord[1]-1);
+        MainActivity.setSPWP(":Set:1", waypointCoord[0]-1, waypointCoord[1]-1);
         showLog("Exiting setWaypointCoord");
     }
 
@@ -846,6 +846,18 @@ public class GridMap extends View {
                             case "3":
                                 direction = "left";
                                 break;
+                            case "4":
+                                direction = "up";
+                                break;
+                            case "5":
+                                direction = "down";
+                                break;
+                            case "6":
+                                direction = "up";
+                                break;
+                            case "7":
+                                direction = "down";
+                                break;
                         }
 
                         showLog("x: " + mapInfoJsonObject.getInt("robotX") + " y: " + mapInfoJsonObject.getInt("robotY"));
@@ -988,7 +1000,7 @@ public class GridMap extends View {
                 // set start coordinate status to false
                 startCoordStatus = false;
                 // print out the message sent to other device
-                MainActivity.setSPWP(":set0", column-1, row-1);
+                MainActivity.setSPWP(":Set:0", column-1, row-1);
 
                 // update the axis on the screen
                 updateRobotAxis(column, row, "up");

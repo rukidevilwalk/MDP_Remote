@@ -233,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     timerHandler.removeCallbacks(timerRunnableExplore);
                 } else if (exploreToggleBtn.getText().equals("STOP")) {
                     showToast("Exploration timer start!");
-                    sendMessage("Algo:start0");
+                    sendMessage("Algo:Start:0");
                     exploreTimer = System.currentTimeMillis();
                     timerHandler.postDelayed(timerRunnableExplore, 0);
                 } else {
@@ -268,7 +268,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     timerHandler.removeCallbacks(timerRunnableFastest);
                 } else if (fastestToggleBtn.getText().equals("STOP")) {
                     showToast("Fastest timer start!");
-                    sendMessage("Algo:start1");
+                    sendMessage("Algo:Start:1");
                     fastestTimer = System.currentTimeMillis();
                     timerHandler.postDelayed(timerRunnableFastest, 0);
                 } else
@@ -677,8 +677,23 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     // for refreshing the direction of the robot
     public void refreshDirection(String direction) {
         gridMap.setRobotDirection(direction);
-		if (!(direction.equals("None")))
-        sendMessage("Algo:direction" + direction);
+		if (!(direction.equals("None"))){
+		    switch (direction){
+                case "up":
+                    sendMessage("Algo:Direction:0");
+                    break;
+                case "right":
+                    sendMessage("Algo:Direction:1");
+                    break;
+                case "down":
+                    sendMessage("Algo:Direction:2");
+                    break;
+                case "left":
+                    sendMessage("Algo:Direction:3");
+                    break;
+            }
+        }
+
     }
 
     // for updating the displaying for robot status
@@ -790,7 +805,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                updateStatus(robotStatus);
 
                // Receiving map information message
-           } else if (payload.length() > 5 && payload.substring(0, 5).equals("A:map")) {
+           } else if (payload.length() > 5 && payload.substring(0, 5).equals("A:Map")) {
 
                     String robotPositionX = payload.substring(5,7);
                     String robotPositionY = payload.substring(7,9);
