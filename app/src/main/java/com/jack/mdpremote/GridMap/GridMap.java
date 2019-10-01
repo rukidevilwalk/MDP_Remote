@@ -352,7 +352,7 @@ public class GridMap extends View {
         row = this.convertRow(row);
         cells[col][row].setType("waypoint");
 
-        MainActivity.setSPWP(":Set:1", waypointCoord[0]-1, waypointCoord[1]-1);
+        MainActivity.setSPWP("1", waypointCoord[0]-1, waypointCoord[1]-1);
         showLog("Exiting setWaypointCoord");
     }
 
@@ -1000,7 +1000,7 @@ public class GridMap extends View {
                 // set start coordinate status to false
                 startCoordStatus = false;
                 // print out the message sent to other device
-                MainActivity.setSPWP(":Set:0", column-1, row-1);
+                MainActivity.setSPWP("0", column-1, row-1);
 
                 // update the axis on the screen
                 updateRobotAxis(column, row, "up");

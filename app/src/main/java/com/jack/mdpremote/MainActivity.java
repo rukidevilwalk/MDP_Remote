@@ -233,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     timerHandler.removeCallbacks(timerRunnableExplore);
                 } else if (exploreToggleBtn.getText().equals("STOP")) {
                     showToast("Exploration timer start!");
-                    sendMessage("Algo:Start:0");
+                    sendMessage("B1:0");
                     exploreTimer = System.currentTimeMillis();
                     timerHandler.postDelayed(timerRunnableExplore, 0);
                 } else {
@@ -268,7 +268,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     timerHandler.removeCallbacks(timerRunnableFastest);
                 } else if (fastestToggleBtn.getText().equals("STOP")) {
                     showToast("Fastest timer start!");
-                    sendMessage("Algo:Start:1");
+                    sendMessage("B1:1");
                     fastestTimer = System.currentTimeMillis();
                     timerHandler.postDelayed(timerRunnableFastest, 0);
                 } else
@@ -680,16 +680,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 		if (!(direction.equals("None"))){
 		    switch (direction){
                 case "up":
-                    sendMessage("Algo:Direction:0");
+                    sendMessage("B3:0");
                     break;
                 case "right":
-                    sendMessage("Algo:Direction:1");
+                    sendMessage("B3:1");
                     break;
                 case "down":
-                    sendMessage("Algo:Direction:2");
+                    sendMessage("B3:2");
                     break;
                 case "left":
-                    sendMessage("Algo:Direction:3");
+                    sendMessage("B3:3");
                     break;
             }
         }
@@ -711,7 +711,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         editor.putString("sentText", sharedPreferences.getString("sentText", "") + "\n " + message);
         editor.commit();
-        sendMessage("Algo" + message);
+        sendMessage("B2:" + message);
         showLog("Exiting sendMessage");
     }
 
