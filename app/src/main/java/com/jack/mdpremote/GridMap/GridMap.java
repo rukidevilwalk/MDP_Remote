@@ -281,7 +281,7 @@ public class GridMap extends View {
         curCoord[0] = col;
         curCoord[1] = row;
         this.setRobotDirection(direction);
-        this.updateRobotAxis(col, row, direction);
+        this.updateRobotAxis(col-1, row-1, direction);
 
         // convert to android coordinate
         row = this.convertRow(row);
@@ -352,7 +352,17 @@ public class GridMap extends View {
         row = this.convertRow(row);
         cells[col][row].setType("waypoint");
 
-        MainActivity.setSPWP("1", waypointCoord[0]-1, waypointCoord[1]-1);
+        String wp_x= ""+ (waypointCoord[0]-1);
+        String wp_y =""+ (waypointCoord[1]-1);
+
+        if ((waypointCoord[0]-1)<10){
+            wp_x = "0" + (waypointCoord[0]-1);
+        }
+
+        if ((waypointCoord[1]-1)<10)
+            wp_y = "0" + (waypointCoord[1]-1);
+
+        MainActivity.setSPWP("1", wp_x, wp_y);
         showLog("Exiting setWaypointCoord");
     }
 
@@ -885,10 +895,10 @@ public class GridMap extends View {
 
                         if (!cells[x][y].type.equals("robot")){
 
-                            // 11 = Image
+                            // 11 = Virtual Wall
                             if ((String.valueOf(exploredString.charAt(j))).equals("1") && (String.valueOf(exploredString.charAt(j + 1))).equals("1") ) {
 
-                                this.setObstacleCoord(x, 20-y);
+                                cells[x][y].setType("explored");
 
                                 // 10 = Explored
                             } else if ((String.valueOf(exploredString.charAt(j))).equals("1") ){
@@ -999,11 +1009,21 @@ public class GridMap extends View {
                 this.setStartCoord(column, row);
                 // set start coordinate status to false
                 startCoordStatus = false;
-                // print out the message sent to other device
-                MainActivity.setSPWP("0", column-1, row-1);
+
+                String sp_x="" + (column-1);
+                String sp_y ="" + (row-1);
+                if ((column-1)<10){
+                     sp_x = "0" + (column-1);
+                }
+
+
+                if ((row-1)<10)
+                     sp_y = "0" + (row-1);
+
+                MainActivity.setSPWP("0", sp_x, sp_y);
 
                 // update the axis on the screen
-                updateRobotAxis(column, row, "up");
+                updateRobotAxis(column-1, row-1, "up");
                 // if the button is checked, uncheck it
                 if (setStartPointToggleBtn.isChecked())
                     setStartPointToggleBtn.toggle();

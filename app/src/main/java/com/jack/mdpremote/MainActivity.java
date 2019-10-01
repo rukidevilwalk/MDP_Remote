@@ -702,12 +702,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     // Sends algo the coords for SP/WP after setting it on the map
-    public static void setSPWP(String type, int x, int y)  {
+    public static void setSPWP(String type, String x, String y)  {
         showLog("Entering sendMessage");
         sharedPreferences();
 
         String message;
-        message = type + x + y;
+        message = type + ""  + x + "" + y;
 
         editor.putString("sentText", sharedPreferences.getString("sentText", "") + "\n " + message);
         editor.commit();
@@ -805,12 +805,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                updateStatus(robotStatus);
 
                // Receiving map information message
-           } else if (payload.length() > 5 && payload.substring(0, 5).equals("A:Map")) {
+           } else if (payload.length() == 158 && payload.substring(0, 3).equals("B4:")) {
 
-                    String robotPositionX = payload.substring(5,7);
-                    String robotPositionY = payload.substring(7,9);
-                    String robotDirection = payload.substring(9,10);
-                     String mapInfo = payload.substring(10);  //mapInfo = "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+                    String robotPositionX = payload.substring(3,5);
+                    String robotPositionY = payload.substring(5,7);
+                    String robotDirection = payload.substring(7,8);
+                     String mapInfo = payload.substring(8);  //mapInfo = "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
                     showLog("mapInfo: " + mapInfo);
 
                     JSONObject payloadObject = new JSONObject();
@@ -827,11 +827,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                     payload = String.valueOf(payloadBody);
 
-                } else if (payload.length() > 7 && payload.substring(0, 7).equals("A:image")){
+                } else if (payload.length() > 7  && payload.substring(0, 3).equals("C1:")){
 
-               String imageX = payload.substring(7,9);
-               String imageY = payload.substring(9,11);
-               String imageType = payload.substring(11);
+               String imageX = payload.substring(3,5);
+               String imageY = payload.substring(5,7);
+               String imageType = payload.substring(7);
 
                JSONObject payloadObject = new JSONObject();
                payloadObject.put("imageX", imageX);
