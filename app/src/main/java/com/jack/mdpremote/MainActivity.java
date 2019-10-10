@@ -660,7 +660,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void refreshLabel() {
         xAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[0]-1));
         yAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[1]-1));
-        setDirectionDropdown();
+       // setDirectionDropdown();
 
     }
 
@@ -671,7 +671,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //messageSentTextView.setText(sharedPreferences.getString("sentText", ""));
         messageSentTextView.setText(sharedPreferences.getString("image", ""));
         connStatusTextView.setText(sharedPreferences.getString("connStatus", ""));
-        setDirectionDropdown();
+      //  setDirectionDropdown();
     }
 
     // for refreshing the direction of the robot
@@ -800,9 +800,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             try {
 
                 // Receiving robot status message
-           if (payload.length() > 8 && payload.substring(0, 8).equals("A:status")){
-               String robotStatus = payload.substring(8);
-               updateStatus(robotStatus);
+           if (payload.length() > 8 && payload.substring(0, 3).equals("B5:")){
+           payload=payload.substring(3);
 
                // Receiving map information message
            } else if (payload.length() == 158 && payload.substring(0, 3).equals("B4:")) {
@@ -827,7 +826,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                     payload = String.valueOf(payloadBody);
 
-                } else if (payload.length() > 7  && payload.substring(0, 3).equals("C1:")){
+                } else if (payload.length() == 8  && payload.substring(0, 3).equals("D3:")){
 
                String imageX = payload.substring(3,5);
                String imageY = payload.substring(5,7);

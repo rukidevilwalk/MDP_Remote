@@ -297,24 +297,24 @@ public class GridMap extends View {
         // for updating the x-axis, y-axis and direction axis (for auto mode)
         TextView xAxisTextView = ((Activity) this.getContext()).findViewById(R.id.xAxisTextView);
         TextView yAxisTextView = ((Activity) this.getContext()).findViewById(R.id.yAxisTextView);
-        Spinner directionDropdown = ((Activity) this.getContext()).findViewById(R.id.directionDropdown);
-        switch (direction){
-            case "None":
-                directionDropdown.setSelection(0);
-                break;
-            case "up":
-                directionDropdown.setSelection(1);
-                break;
-            case "down":
-                directionDropdown.setSelection(2);
-                break;
-            case "left":
-                directionDropdown.setSelection(3);
-                break;
-            case "right":
-                directionDropdown.setSelection(4);
-                break;
-        }
+//        Spinner directionDropdown = ((Activity) this.getContext()).findViewById(R.id.directionDropdown);
+//        switch (direction){
+//            case "None":
+//                directionDropdown.setSelection(0);
+//                break;
+//            case "up":
+//                directionDropdown.setSelection(1);
+//                break;
+//            case "down":
+//                directionDropdown.setSelection(2);
+//                break;
+//            case "left":
+//                directionDropdown.setSelection(3);
+//                break;
+//            case "right":
+//                directionDropdown.setSelection(4);
+//                break;
+//        }
         xAxisTextView.setText(String.valueOf(col));
         yAxisTextView.setText(String.valueOf(row));
 
@@ -580,7 +580,7 @@ public class GridMap extends View {
 
                     this.getImageCoord().add(imageCoord);
                     this.sharedPreferences();
-                    String message = "(" + (col - 1) + ", " + (row - 1) + ", " + imageCoord[2] + ")";
+                    String message = "(" + (col - 1) + ", " + (row - 1) + ", " + Integer.parseInt(imageCoord[2],16)  + ")";
                     editor.putString("image", sharedPreferences.getString("image", "") + "\n " + message);
                     editor.commit();
                     showLog("Creating image: " + message);
@@ -709,34 +709,34 @@ public class GridMap extends View {
                     case "5":
                         imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.five);
                         break;
-                    case "A":
+                    case "6":
                         imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.letter_a);
                         break;
-                    case "B":
+                    case "7":
                         imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.letter_b);
                         break;
-                    case "C":
+                    case "8":
                         imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.letter_c);
                         break;
-                    case "D":
+                    case "9":
                         imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.letter_d);
                         break;
-                    case "E":
+                    case "A":
                         imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.letter_e);
                         break;
-                    case "circle":
+                    case "B":
                         imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.circle);
                         break;
-                    case "up":
+                    case "C":
                         imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.up);
                         break;
-                    case "right":
+                    case "D":
                         imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.right);
                         break;
-                    case "down":
+                    case "E":
                         imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.down);
                         break;
-                    case "left":
+                    case "F":
                         imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.left);
                         break;
                     default:
@@ -871,7 +871,7 @@ public class GridMap extends View {
                         }
 
                         showLog("x: " + mapInfoJsonObject.getInt("robotX") + " y: " + mapInfoJsonObject.getInt("robotY"));
-                        //this.setStartCoord(mapInfoJsonObject.getInt("x"), mapInfoJsonObject.getInt("y"));
+
                         this.setCurCoord(mapInfoJsonObject.getInt("robotX") + 1, mapInfoJsonObject.getInt("robotY") + 1, direction);
                         canDrawRobot = true;
                     } catch (JSONException e){
@@ -939,6 +939,8 @@ public class GridMap extends View {
                     for (int j = 0; j < mapInfoJsonArray.length(); j++) {
                         mapInfoJsonObject = mapInfoJsonArray.getJSONObject(j);
                         if (!mapInfoJsonObject.getString("imageType").equals("placeholder")) {
+                            String imageID = mapInfoJsonObject.getString("imageType");
+                           String  newImageID = new BigInteger(imageID, 16).toString(2);
                             this.setImageCoordinate(mapInfoJsonObject.getInt("imageX"), mapInfoJsonObject.getInt("imageY"), mapInfoJsonObject.getString("imageType"));
 
                         }
@@ -1299,7 +1301,7 @@ public class GridMap extends View {
         mapDrawn = false;           // set map drawn to false
         canDrawRobot = false;       // set can draw robot to false
         validPosition = false;      // set valid position to false
-        Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.arrow_error);   // default image for bitmap
+       // Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.arrow_error);   // default image for bitmap
 
         showLog("Exiting resetMap");
         this.invalidate();
