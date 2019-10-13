@@ -660,7 +660,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void refreshLabel() {
         xAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[0]-1));
         yAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[1]-1));
-       // setDirectionDropdown();
+        // setDirectionDropdown();
 
     }
 
@@ -671,14 +671,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //messageSentTextView.setText(sharedPreferences.getString("sentText", ""));
         messageSentTextView.setText(sharedPreferences.getString("image", ""));
         connStatusTextView.setText(sharedPreferences.getString("connStatus", ""));
-      //  setDirectionDropdown();
+        //  setDirectionDropdown();
     }
 
     // for refreshing the direction of the robot
     public void refreshDirection(String direction) {
         gridMap.setRobotDirection(direction);
-		if (!(direction.equals("None"))){
-		    switch (direction){
+        if (!(direction.equals("None"))){
+            switch (direction){
                 case "up":
                     sendMessage("B3:0");
                     break;
@@ -759,20 +759,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             sharedPreferences();
 
             if (status.equals("connected")) {
-                //When the device reconnects, this broadcast will be called again to enter CONNECTED if statement
-                //must dismiss the previous dialog that is waiting for connection if not it will block the execution
+
                 try {
                     myDialog.dismiss();
                 } catch (NullPointerException e) {
                     e.printStackTrace();
                 }
 
-                Log.d(TAG, "mainReceiver: Device now connected to " + mDevice.getName());
                 Toast.makeText(MainActivity.this, "Device now connected to " + mDevice.getName(), Toast.LENGTH_LONG).show();
                 editor.putString("connStatus", mDevice.getName());
                 connStatusTextView.setText(mDevice.getName());
+
             } else if (status.equals("disconnected")) {
-                Log.d(TAG, "mainReceiver: Disconnected from " + mDevice.getName());
+
                 Toast.makeText(MainActivity.this, "Disconnected from " + mDevice.getName(), Toast.LENGTH_LONG).show();
                 //start accept thread and wait on the SAME device again
                 mBluetoothConnection = new BluetoothConnectionService(MainActivity.this);
@@ -798,18 +797,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             showLog("messageReceiver: " + payload);
 
             try {
+                //mapInfo = "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
 
-                // Receiving robot status message
-           if (payload.length() > 8 && payload.substring(0, 3).equals("B5:")){
-           payload=payload.substring(3);
-
-               // Receiving map information message
-           } else if (payload.length() == 158 && payload.substring(0, 3).equals("B4:")) {
+                if (payload.length() == 158 && payload.substring(0, 3).equals("B4:")) {
 
                     String robotPositionX = payload.substring(3,5);
                     String robotPositionY = payload.substring(5,7);
                     String robotDirection = payload.substring(7,8);
-                     String mapInfo = payload.substring(8);  //mapInfo = "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+                    String mapInfo = payload.substring(8);
                     showLog("mapInfo: " + mapInfo);
 
                     JSONObject payloadObject = new JSONObject();
@@ -826,26 +821,27 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                     payload = String.valueOf(payloadBody);
 
-                } else if (payload.length() == 8  && payload.substring(0, 3).equals("D3:")){
+                    // Final MDF result to be displayed, image type and coordinates are appended at the end
+                } else if (payload.length() == 8  && payload.substring(0, 3).equals("B5:")){
 
-               String imageX = payload.substring(3,5);
-               String imageY = payload.substring(5,7);
-               String imageType = payload.substring(7);
+                    String imageX = payload.substring(3,5);
+                    String imageY = payload.substring(5,7);
+                    String imageType = payload.substring(7);
 
-               JSONObject payloadObject = new JSONObject();
-               payloadObject.put("imageX", imageX);
-               payloadObject.put("imageY", imageY);
-               payloadObject.put("imageType", imageType);
+                    JSONObject payloadObject = new JSONObject();
+                    payloadObject.put("imageX", imageX);
+                    payloadObject.put("imageY", imageY);
+                    payloadObject.put("imageType", imageType);
 
 
-               JSONArray payloadArray = new JSONArray();
-               payloadArray.put(payloadObject);
-               JSONObject payloadBody = new JSONObject();
-               payloadBody.put("image", payloadArray);
+                    JSONArray payloadArray = new JSONArray();
+                    payloadArray.put(payloadObject);
+                    JSONObject payloadBody = new JSONObject();
+                    payloadBody.put("image", payloadArray);
 
-               payload = String.valueOf(payloadBody);
+                    payload = String.valueOf(payloadBody);
 
-           }
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }

@@ -15,7 +15,6 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -693,51 +692,52 @@ public class GridMap extends View {
                 int col = Integer.parseInt(imageCoord.get(i)[0]);
                 int row = convertRow(Integer.parseInt(imageCoord.get(i)[1]));
                 rect = new RectF(col * cellSize, row * cellSize, (col + 1) * cellSize, (row + 1) * cellSize);
+
                 switch (imageCoord.get(i)[2]) {
                     case "1":
-                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.one);
-                        break;
-                    case "2":
-                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.two);
-                        break;
-                    case "3":
-                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.three);
-                        break;
-                    case "4":
-                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.four);
-                        break;
-                    case "5":
-                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.five);
-                        break;
-                    case "6":
-                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.letter_a);
-                        break;
-                    case "7":
-                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.letter_b);
-                        break;
-                    case "8":
-                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.letter_c);
-                        break;
-                    case "9":
-                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.letter_d);
-                        break;
-                    case "A":
-                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.letter_e);
-                        break;
-                    case "B":
-                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.circle);
-                        break;
-                    case "C":
                         imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.up);
                         break;
-                    case "D":
-                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.right);
-                        break;
-                    case "E":
+                    case "2":
                         imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.down);
                         break;
-                    case "F":
+                    case "3":
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.right);
+                        break;
+                    case "4":
                         imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.left);
+                        break;
+                    case "5":
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.circle);
+                        break;
+                    case "6":
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.one);
+                        break;
+                    case "7":
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.two);
+                        break;
+                    case "8":
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.three);
+                        break;
+                    case "9":
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.four);
+                        break;
+                    case "A":
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.five);
+                        break;
+                    case "B":
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.letter_a);
+                        break;
+                    case "C":
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.letter_b);
+                        break;
+                    case "D":
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.letter_c);
+                        break;
+                    case "E":
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.letter_d);
+                        break;
+                    case "F":
+                        imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.letter_e);
                         break;
                     default:
                         break;
@@ -922,17 +922,6 @@ public class GridMap extends View {
 
                     break;
 
-
-                // if it contains obstacle array
-//                case "obstacle":
-//                    mapInfoJsonArray = mapInformation.getJSONArray("obstacle");
-//                    for (int j = 0; j < mapInfoJsonArray.length(); j++) {
-//                        mapInfoJsonObject = mapInfoJsonArray.getJSONObject(j);
-//                        this.setObstacleCoord(mapInfoJsonObject.getInt("x"), mapInfoJsonObject.getInt("y"));
-//                    }
-//
-//                    break;
-
                 // Custom image coord/type instruction
                 case "image":
                     mapInfoJsonArray = mapInformation.getJSONArray("image");
@@ -974,13 +963,6 @@ public class GridMap extends View {
     public JSONObject getMapInformation() {
         showLog("getCreateJsonObject() :" + getCreateJsonObject());
         return this.getCreateJsonObject();
-    }
-
-    // Only need to use this if robot status message will be stored in a jsonobject
-    // Else, can just directly display message in main activity
-    public void printRobotStatus(String message) {
-        TextView robotStatusTextView = ((Activity) this.getContext()).findViewById(R.id.robotStatusTextView);
-        robotStatusTextView.setText(message);
     }
 
     @Override
