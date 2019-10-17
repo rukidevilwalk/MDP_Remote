@@ -821,25 +821,32 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                     payload = String.valueOf(payloadBody);
 
-                    // Final MDF result to be displayed, image type and coordinates are appended at the end
-                } else if (payload.length() == 8  && payload.substring(0, 3).equals("B5:")){
+                    sharedPreferences();
+                    String receivedText = sharedPreferences.getString("receivedText", "") + "\n " + payload;
+                    editor.putString("receivedText", receivedText);
+                    editor.commit();
 
-                    String imageX = payload.substring(3,5);
-                    String imageY = payload.substring(5,7);
-                    String imageType = payload.substring(7);
 
-                    JSONObject payloadObject = new JSONObject();
-                    payloadObject.put("imageX", imageX);
-                    payloadObject.put("imageY", imageY);
-                    payloadObject.put("imageType", imageType);
+                } else if (payload.substring(0, 3).equals("B5:")){  // Final MDF result to be displayed, image type and coordinates are appended at the end
 
+                    int indexOfImage = payload.indexOf("|");
+                    String MDF = payload.substring(3,indexOfImage);
+                    String imageBody = payload.substring(indexOfImage+1);
 
                     JSONArray payloadArray = new JSONArray();
+                    JSONObject payloadObject = new JSONObject();
+
+                    payloadObject.put("imageString", imageBody);
                     payloadArray.put(payloadObject);
                     JSONObject payloadBody = new JSONObject();
                     payloadBody.put("image", payloadArray);
 
                     payload = String.valueOf(payloadBody);
+
+                    sharedPreferences();
+                    String receivedText = sharedPreferences.getString("receivedText", "") + "\n " + MDF;
+                    editor.putString("receivedText", receivedText);
+                    editor.commit();
 
                 }
             } catch (JSONException e) {
@@ -863,10 +870,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
             }
 
-            sharedPreferences();
-            String receivedText = sharedPreferences.getString("receivedText", "") + "\n " + payload;
-            editor.putString("receivedText", receivedText);
-            editor.commit();
+
         }
     };
 

@@ -925,14 +925,27 @@ public class GridMap extends View {
                 // Custom image coord/type instruction
                 case "image":
                     mapInfoJsonArray = mapInformation.getJSONArray("image");
+                    showLog("updateMapInformation --- setImages: " + mapInfoJsonArray);
                     for (int j = 0; j < mapInfoJsonArray.length(); j++) {
                         mapInfoJsonObject = mapInfoJsonArray.getJSONObject(j);
-                        if (!mapInfoJsonObject.getString("imageType").equals("placeholder")) {
-                            String imageID = mapInfoJsonObject.getString("imageType");
-                           String  newImageID = new BigInteger(imageID, 16).toString(2);
-                            this.setImageCoordinate(mapInfoJsonObject.getInt("imageX"), mapInfoJsonObject.getInt("imageY"), mapInfoJsonObject.getString("imageType"));
+                        showLog("updateMapInformation --- setImages: " + mapInfoJsonObject);
+                            String imageString = mapInfoJsonObject.getString("imageString");
 
-                        }
+                            if (imageString.length() != 0){
+                                while(imageString.length() > 0) {
+                                    String nextChunk = imageString.substring(0,5);
+                                    showLog("nextChunk: " + nextChunk);
+                                    String imageX = nextChunk.substring(0,2);
+                                    String imageY = nextChunk.substring(2,4);
+                                    String imageType = nextChunk.substring(4);
+
+                                    this.setImageCoordinate(Integer.parseInt(imageX), Integer.parseInt(imageY), imageType);
+
+                                    imageString = imageString.substring(5);
+                                }
+                            }
+
+
                     }
                     break;
 
