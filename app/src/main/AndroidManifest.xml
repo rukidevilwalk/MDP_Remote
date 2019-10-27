@@ -28,7 +28,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.jack.mdpremote.GridMap.MapInformation" />
         <activity android:name="com.jack.mdpremote.SendReceive.SendReceive" />
         <activity android:name="com.jack.mdpremote.Bluetooth.BluetoothSettings"></activity>
     </application>

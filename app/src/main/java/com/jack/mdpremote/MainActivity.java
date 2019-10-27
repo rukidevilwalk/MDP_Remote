@@ -38,7 +38,6 @@ import android.widget.ToggleButton;
 import com.jack.mdpremote.Bluetooth.BluetoothConnectionService;
 import com.jack.mdpremote.Bluetooth.BluetoothSettings;
 import com.jack.mdpremote.GridMap.GridMap;
-import com.jack.mdpremote.GridMap.MapInformation;
 import com.jack.mdpremote.SendReceive.SendReceive;
 
 import org.json.JSONArray;
@@ -165,7 +164,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         directionDropdown = findViewById(R.id.directionDropdown);
 
         sendReceiveMenuItem = findViewById(R.id.sendReceiveMenuItem);
-        getMapMenuItem = findViewById(R.id.getMapMenuItem);
         bluetoothMenuItem = findViewById(R.id.bluetoothMenuItem);
         connStatusTextView = findViewById(R.id.connStatusTextView);
 
@@ -601,10 +599,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 showToast("Message Box selected");
                 intent = new Intent(MainActivity.this, SendReceive.class);
                 editor.putString("receivedText", messageReceivedTextView.getText().toString());
-                break;
-            case R.id.getMapMenuItem:
-                showToast("Get Map Information selected");
-                intent = new Intent(MainActivity.this, MapInformation.class);
                 break;
 
             default:
