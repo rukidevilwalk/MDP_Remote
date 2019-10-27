@@ -828,20 +828,25 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
                 } else if (payload.substring(0, 3).equals("B5:")){  // Final MDF result to be displayed, image type and coordinates are appended at the end
-
+                    String MDF = "";
                     int indexOfImage = payload.indexOf("|");
-                    String MDF = payload.substring(3,indexOfImage);
-                    String imageBody = payload.substring(indexOfImage+1);
+                    if (indexOfImage != -1){
+                         MDF = payload.substring(3,indexOfImage);
+                        String imageBody = payload.substring(indexOfImage+1);
 
-                    JSONArray payloadArray = new JSONArray();
-                    JSONObject payloadObject = new JSONObject();
+                        JSONArray payloadArray = new JSONArray();
+                        JSONObject payloadObject = new JSONObject();
 
-                    payloadObject.put("imageString", imageBody);
-                    payloadArray.put(payloadObject);
-                    JSONObject payloadBody = new JSONObject();
-                    payloadBody.put("image", payloadArray);
+                        payloadObject.put("imageString", imageBody);
+                        payloadArray.put(payloadObject);
+                        JSONObject payloadBody = new JSONObject();
+                        payloadBody.put("image", payloadArray);
 
-                    payload = String.valueOf(payloadBody);
+                        payload = String.valueOf(payloadBody);
+                    } else {
+                        MDF = payload.substring(3);
+                    }
+
 
                     sharedPreferences();
                     String receivedText = sharedPreferences.getString("receivedText", "") + "\n " + MDF;
