@@ -122,7 +122,7 @@ public class GridMap extends View {
 
         // if map not drawn
         if (!this.getMapDrawn()) {
-            canvas.drawColor(Color.parseColor("#FFFFFF"));
+            canvas.drawColor(Color.parseColor("#000000"));
             // create placeholder for image coordinate
             String[] placeholderImageCoord = new String[3];
             placeholderImageCoord[0] = "999";
