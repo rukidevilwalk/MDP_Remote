@@ -111,16 +111,12 @@ public class GridMap extends View {
     // draw the custom view grid map
     @Override
     protected void onDraw(Canvas canvas) {
-        showLog("Creating map");
 
         super.onDraw(canvas);
-        showLog("Redrawing map");
 
-        // local variable
         ArrayList<String[]> imageCoord = this.getImageCoord();
         int[] curCoord = this.getCurCoord();
-
-        // if map not drawn
+        
         if (!this.getMapDrawn()) {
             canvas.drawColor(Color.parseColor("#000000"));
             // create placeholder for image coordinate
@@ -333,7 +329,6 @@ public class GridMap extends View {
         editor.putString("direction", direction);
         editor.commit();
         this.invalidate();
-        ;
     }
 
     // get direction of the robot

@@ -1,47 +1,46 @@
 package com.jack.mdpremote.Bluetooth;
 
-import android.bluetooth.BluetoothDevice;
-import android.content.Context;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.bluetooth.BluetoothDevice;
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+
 
 import com.jack.mdpremote.R;
 
 import java.util.ArrayList;
 
-
 public class DeviceListAdapter extends ArrayAdapter<BluetoothDevice> {
 
-    private LayoutInflater mLayoutInflater;
-    private ArrayList<BluetoothDevice> myDevices;
-    private int mViewResourceId;
+    private LayoutInflater mLI;
+    private ArrayList<BluetoothDevice> devices;
+    private int vRI;
 
     public DeviceListAdapter(Context context, int tvResourceId, ArrayList<BluetoothDevice> devices) {
         super(context, tvResourceId, devices);
-        this.myDevices = devices;
-        mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mViewResourceId = tvResourceId;
+        this.devices = devices;
+        mLI = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        vRI = tvResourceId;
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
-        Log.d("DeviceListAdapter", "Getting View");
-        convertView = mLayoutInflater.inflate(mViewResourceId, null);
 
-        BluetoothDevice device = myDevices.get(position);
+        convertView = mLI.inflate(vRI, null);
+
+        BluetoothDevice device = devices.get(position);
 
         if (device != null) {
-            TextView deviceName = convertView.findViewById(R.id.deviceName);
-            TextView deviceAddress = convertView.findViewById(R.id.deviceAddress);
+            TextView name = convertView.findViewById(R.id.deviceName);
+            TextView address = convertView.findViewById(R.id.deviceAddress);
 
-            if (deviceName != null) {
-                deviceName.setText(device.getName());
+            if (name != null) {
+                name.setText(device.getName());
             }
-            if (deviceAddress != null) {
-                deviceAddress.setText(device.getAddress());
+            if (address != null) {
+                address.setText(device.getAddress());
             }
         }
 
