@@ -247,6 +247,21 @@ public class SendReceive extends AppCompatActivity {
         }
     };
 
+    public static void closeKeyboard(Activity activity) {
+
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+
+        View view = activity.getCurrentFocus();
+
+        if (view == null) {
+
+            view = new View(activity);
+
+        }
+
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
     private BroadcastReceiver BCReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -316,18 +331,5 @@ public class SendReceive extends AppCompatActivity {
         }
     }
 
-    public static void closeKeyboard(Activity activity) {
 
-        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-
-        View view = activity.getCurrentFocus();
-
-        if (view == null) {
-
-            view = new View(activity);
-
-        }
-
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
 }

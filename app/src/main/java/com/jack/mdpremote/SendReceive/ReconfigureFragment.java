@@ -45,17 +45,26 @@ public class ReconfigureFragment extends DialogFragment {
         super.onCreate(savedInstanceState);
 
 
-        getDialog().setTitle("Reconfiguration");
-
         f1Edit = rootView.findViewById(R.id.f1ValueEditText);
 
         f2Edit = rootView.findViewById(R.id.f2ValueEditText);
 
         saveBtn = rootView.findViewById(R.id.saveBtn);
 
+        getDialog().setTitle("Reconfiguration");
+
+
         cancelReconfigBtn = rootView.findViewById(R.id.cancelReconfigureBtn);
 
         sharedPreferences = getActivity().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
+
+
+        if (sharedPreferences.contains("F2")) {
+
+            f2Edit.setText(sharedPreferences.getString("F2", ""));
+
+            f2 = sharedPreferences.getString("F2", "");
+        }
 
         if (sharedPreferences.contains("F1")) {
 
@@ -65,13 +74,6 @@ public class ReconfigureFragment extends DialogFragment {
 
             getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-        }
-
-        if (sharedPreferences.contains("F2")) {
-
-            f2Edit.setText(sharedPreferences.getString("F2", ""));
-
-            f2 = sharedPreferences.getString("F2", "");
         }
 
         if (savedInstanceState != null) {
@@ -122,6 +124,13 @@ public class ReconfigureFragment extends DialogFragment {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+
+        super.onSaveInstanceState(outState);
+
+    }
+
+    @Override
     public void onDismiss(DialogInterface dialog) {
 
         super.onDismiss(dialog);
@@ -133,13 +142,6 @@ public class ReconfigureFragment extends DialogFragment {
             ((SendReceive) getActivity()).f2Btn.setContentDescription(f2);
 
         f1Edit.clearFocus();
-
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-
-        super.onSaveInstanceState(outState);
 
     }
 

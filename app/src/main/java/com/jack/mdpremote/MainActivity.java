@@ -420,7 +420,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     showToast("Cancelled selecting starting point");
                 else if (setStartPointToggleBtn.getText().equals("CANCEL") && !gridMap.getAutoUpdate()) {
                     showToast("Please select starting point");
-                    gridMap.setStartCoordStatus(true);
+                    gridMap.setStartCoordinatesStatus(true);
                     gridMap.toggleCheckedBtn("setStartPointToggleBtn");
                 } else
                     showToast("Please select manual mode");
@@ -437,7 +437,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     showToast("Cancelled selecting waypoint");
                 else if (setWaypointToggleBtn.getText().equals("CANCEL")) {
                     showToast("Please select waypoint");
-                    gridMap.setWaypointStatus(true);
+                    gridMap.setWPStatus(true);
                     gridMap.toggleCheckedBtn("setWaypointToggleBtn");
                 } else
                     showToast("Please select manual mode");
@@ -652,8 +652,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
     // for refreshing all the label in the screen
     private void refreshLabel() {
-        xAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[0]-1));
-        yAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[1]-1));
+        xAxisTextView.setText(String.valueOf(gridMap.getCurrentCoordinates()[0]-1));
+        yAxisTextView.setText(String.valueOf(gridMap.getCurrentCoordinates()[1]-1));
         // setDirectionDropdown();
 
     }
@@ -854,7 +854,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             if (gridMap.getAutoUpdate()) {
                 try {
-                    gridMap.setReceivedJsonObject(new JSONObject(payload));
+                    gridMap.setReceivedPayload(new JSONObject(payload));
                     gridMap.updateMapInformation();
                 } catch (JSONException e) {
                     showLog("Map information auto update unsuccessful");
@@ -862,7 +862,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }  else {
 
                 try {
-                    gridMap.setReceivedJsonObject(new JSONObject(payload));
+                    gridMap.setReceivedPayload(new JSONObject(payload));
 
                 } catch (JSONException e) {
                     showLog("Map information manual update error: " + e);
