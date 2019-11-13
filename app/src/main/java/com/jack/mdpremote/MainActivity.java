@@ -52,18 +52,39 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private static SharedPreferences.Editor editor;
 
-    private static Context context;
-
-    private static long exploreTimer;
-
-    private static long fastestTimer;
-
     private static boolean startActivityStatus = true;
 
     public String connStatus = "None";
 
     String[] direction = {"None", "up", "down", "left", "right"};
 
+    private static Context context;
+
+    private static long expTimer;
+
+    private static long fastTimer;
+
+    TextView receivedMessageText;
+
+    ToggleButton manualAutoToggleBtn;
+
+    BluetoothConnectionService BluetoothConnection;
+
+    BluetoothDevice BTDevice;
+
+    ProgressDialog progressDialog;
+
+    Button manualUpdateBtn;
+
+    Intent intent;
+
+    Button resetGridMapBtn;
+
+    ToggleButton setSPToggle, setWPToggle;
+
+    TextView xAxisText, yAxisText;
+
+    Button exploredBtn, obstacleBtn, unexploredBtn;
 
     GridMap gridMap;
 
@@ -73,44 +94,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     MenuItem bluetoothMenuItem, sendReceiveMenuItem;
 
-    TextView exploreTimeTextView, fastestTimeTextView;
+    TextView exploreTimeText, fastestTimeText;
 
-    ToggleButton exploreToggleBtn, fastestToggleBtn;
+    ToggleButton exploreToggle, fastestToggle;
 
-    ImageButton exploreResetImageBtn, fastestResetImageBtn;
-
-    TextView robotStatusTextView;
-
-    ImageButton moveForwardImageBtn, turnRightImageBtn, moveBackwardImageBtn, turnLeftImageBtn;
-
-    Switch phoneTiltSwitch;
-
-    Button resetMapBtn;
-
-    ToggleButton setSPToggle, setWPToggle;
-
-    TextView xAxisTextView, yAxisTextView;
-
-    Button exploredImageBtn, obstacleImageBtn, clearImageBtn;
+    ImageButton expReset, fastReset;
 
     Spinner directionDropdown;
 
+    TextView robotStatusText;
+
+    ImageButton moveForwardBtn, turnRightBtn, reverseBtn, turnLeftBtn;
+
+    Switch tiltToggle;
+
     TextView sentMessageText;
-
-    TextView receivedMessageText;
-
-    ToggleButton manualAutoToggleBtn;
-
-    Button manualUpdateBtn;
-
-    Intent intent;
-
-    BluetoothConnectionService BluetoothConnection;
-
-    BluetoothDevice BTDevice;
-
-    ProgressDialog progressDialog;
-
 
     private Sensor sensor;
 
@@ -124,15 +122,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         @Override
         public void run() {
 
-            long millisExplore = System.currentTimeMillis() - exploreTimer;
+            long ms = System.currentTimeMillis() - expTimer;
 
-            int secondsExplore = (int) (millisExplore / 1000);
+            int sec = (int) (ms / 1000);
 
-            int minutesExplore = secondsExplore / 60;
+            int min = sec / 60;
 
-            secondsExplore = secondsExplore % 60;
+            sec = sec % 60;
 
-            exploreTimeTextView.setText(String.format("%02d:%02d", minutesExplore, secondsExplore));
+            exploreTimeText.setText(String.format("%02d:%02d", min, sec));
 
             timerHandler.postDelayed(this, 500);
         }
@@ -142,15 +140,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         @Override
         public void run() {
 
-            long millisFastest = System.currentTimeMillis() - fastestTimer;
+            long ms = System.currentTimeMillis() - fastTimer;
 
-            int secondsFastest = (int) (millisFastest / 1000);
+            int sec = (int) (ms / 1000);
 
-            int minutesFastest = secondsFastest / 60;
+            int min = sec / 60;
 
-            secondsFastest = secondsFastest % 60;
+            sec = sec % 60;
 
-            fastestTimeTextView.setText(String.format("%02d:%02d", minutesFastest, secondsFastest));
+            fastestTimeText.setText(String.format("%02d:%02d", min, sec));
 
             timerHandler.postDelayed(this, 500);
         }
@@ -161,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         @Override
         public void run() {
 
-            refreshMessage();
+            rfMessage();
 
             timerHandler.postDelayed(timedMessage, 500);
         }
@@ -180,42 +178,42 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         sendReceive = new SendReceive();
 
 
-        exploreTimer = 0;
+        expTimer = 0;
 
-        fastestTimer = 0;
+        fastTimer = 0;
 
 
         gridMap = findViewById(R.id.mapView);
 
-        xAxisTextView = findViewById(R.id.xAxisTextView);
+        xAxisText = findViewById(R.id.xAxisTextView);
 
-        exploreTimeTextView = findViewById(R.id.exploreTimeTextView);
+        exploreTimeText = findViewById(R.id.exploreTimeTextView);
 
-        exploreToggleBtn = findViewById(R.id.exploreToggleBtn);
+        exploreToggle = findViewById(R.id.exploreToggleBtn);
 
-        exploreResetImageBtn = findViewById(R.id.exploreResetImageBtn);
+        expReset = findViewById(R.id.exploreResetImageBtn);
 
-        fastestToggleBtn = findViewById(R.id.fastestToggleBtn);
+        fastestToggle = findViewById(R.id.fastestToggleBtn);
 
-        fastestResetImageBtn = findViewById(R.id.fastestResetImageBtn);
+        fastReset = findViewById(R.id.fastestResetImageBtn);
 
-        robotStatusTextView = findViewById(R.id.robotStatusTextView);
+        robotStatusText = findViewById(R.id.robotStatusTextView);
 
-        yAxisTextView = findViewById(R.id.yAxisTextView);
+        yAxisText = findViewById(R.id.yAxisTextView);
 
-        resetMapBtn = findViewById(R.id.resetMapBtn);
+        resetGridMapBtn = findViewById(R.id.resetMapBtn);
 
         setSPToggle = findViewById(R.id.setStartPointToggleBtn);
 
         setWPToggle = findViewById(R.id.setWaypointToggleBtn);
 
-        turnRightImageBtn = findViewById(R.id.turnRightImageBtn);
+        turnRightBtn = findViewById(R.id.turnRightImageBtn);
 
-        moveBackwardImageBtn = findViewById(R.id.moveBackwardImageBtn);
+        reverseBtn = findViewById(R.id.moveBackwardImageBtn);
 
-        turnLeftImageBtn = findViewById(R.id.turnLeftImageBtn);
+        turnLeftBtn = findViewById(R.id.turnLeftImageBtn);
 
-        phoneTiltSwitch = findViewById(R.id.phoneTiltSwitch);
+        tiltToggle = findViewById(R.id.phoneTiltSwitch);
 
         sendReceiveMenuItem = findViewById(R.id.sendReceiveMenuItem);
 
@@ -223,17 +221,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         connStatusTextView = findViewById(R.id.connStatusTextView);
 
-        exploredImageBtn = findViewById(R.id.exploredImageBtn);
+        exploredBtn = findViewById(R.id.exploredImageBtn);
 
-        obstacleImageBtn = findViewById(R.id.obstacleImageBtn);
+        obstacleBtn = findViewById(R.id.obstacleImageBtn);
 
-        clearImageBtn = findViewById(R.id.unexploredImageBtn);
+        unexploredBtn = findViewById(R.id.unexploredImageBtn);
 
         directionDropdown = findViewById(R.id.directionDropdown);
 
-        moveForwardImageBtn = findViewById(R.id.moveForwardImageBtn);
+        moveForwardBtn = findViewById(R.id.moveForwardImageBtn);
 
-        fastestTimeTextView = findViewById(R.id.fastestTimeTextView);
+        fastestTimeText = findViewById(R.id.fastestTimeTextView);
 
         sentMessageText = findViewById(R.id.imagesTextView);
 
@@ -263,25 +261,22 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         timerHandler.post(timedMessage);
 
-
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, new IntentFilter("incomingMessage"));
-
-        robotStatusTextView.setMovementMethod(new ScrollingMovementMethod());
 
         sentMessageText.setMovementMethod(new ScrollingMovementMethod());
 
         receivedMessageText.setMovementMethod(new ScrollingMovementMethod());
 
+        robotStatusText.setMovementMethod(new ScrollingMovementMethod());
 
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
 
-        exploreToggleBtn.setOnClickListener(new View.OnClickListener() {
+        exploreToggle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
 
                 Button exploreToggleBtn = (Button) view;
 
@@ -293,7 +288,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                     sendMessage("B1:0");
 
-                    exploreTimer = System.currentTimeMillis();
+                    expTimer = System.currentTimeMillis();
 
                     timerHandler.postDelayed(timerRunnableExplore, 0);
 
@@ -303,15 +298,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
 
 
-        exploreResetImageBtn.setOnClickListener(new View.OnClickListener() {
+        expReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                exploreTimeTextView.setText("00:00");
+                exploreTimeText.setText("00:00");
 
-                if (exploreToggleBtn.isChecked())
+                if (exploreToggle.isChecked())
 
-                    exploreToggleBtn.toggle();
+                    exploreToggle.toggle();
 
                 timerHandler.removeCallbacks(timerRunnableExplore);
 
@@ -319,7 +314,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
 
 
-        fastestToggleBtn.setOnClickListener(new View.OnClickListener() {
+        fastestToggle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -333,7 +328,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                     sendMessage("B1:1");
 
-                    fastestTimer = System.currentTimeMillis();
+                    fastTimer = System.currentTimeMillis();
 
                     timerHandler.postDelayed(timerRunnableFastest, 0);
                 }
@@ -342,14 +337,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
 
 
-        fastestResetImageBtn.setOnClickListener(new View.OnClickListener() {
+        fastReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                fastestTimeTextView.setText("00:00");
+                fastestTimeText.setText("00:00");
 
-                if (fastestToggleBtn.isChecked())
-                    fastestToggleBtn.toggle();
+                if (fastestToggle.isChecked())
+                    fastestToggle.toggle();
 
                 timerHandler.removeCallbacks(timerRunnableFastest);
 
@@ -357,139 +352,87 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
 
 
-        moveForwardImageBtn.setOnClickListener(new View.OnClickListener() {
+        moveForwardBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 if (gridMap.getAutoUpdate())
-                    updateStatus("SET TO MANUAL MODE FIRST");
+                    updateRobotStatus("SET TO MANUAL MODE FIRST");
                 else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
                     gridMap.moveRobot("forward");
 
-                    refreshLabel();
+                    rfLabel();
 
                     if (gridMap.getValidPosition())
-                        updateStatus("MOVE: FORWARD");
+                        updateRobotStatus("MOVE: FORWARD");
                     else
-                        updateStatus("MOVE: FORWARD IS BLOCKED");
+                        updateRobotStatus("MOVE: FORWARD IS BLOCKED");
                     sendMessage("forward");
                 } else
-                    updateStatus("SET STARTING POINT FIRST");
+                    updateRobotStatus("SET STARTING POINT FIRST");
 
             }
         });
 
 
-        turnRightImageBtn.setOnClickListener(new View.OnClickListener() {
+        turnRightBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 if (gridMap.getAutoUpdate())
-                    updateStatus("SET TO MANUAL MODE FIRST'");
+                    updateRobotStatus("SET TO MANUAL MODE FIRST'");
                 else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
                     gridMap.moveRobot("right");
-                    refreshLabel();
-                    updateStatus("TURN: RIGHT");
+                    rfLabel();
+                    updateRobotStatus("TURN: RIGHT");
                     sendMessage("right");
                 } else
-                    updateStatus("SET STARTING POINT FIRST");
+                    updateRobotStatus("SET STARTING POINT FIRST");
 
             }
         });
 
 
-        moveBackwardImageBtn.setOnClickListener(new View.OnClickListener() {
+        reverseBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 if (gridMap.getAutoUpdate())
-                    updateStatus("SET TO MANUAL MODE FIRST'");
+                    updateRobotStatus("SET TO MANUAL MODE FIRST'");
                 else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
                     gridMap.moveRobot("back");
-                    refreshLabel();
+                    rfLabel();
                     if (gridMap.getValidPosition())
-                        updateStatus("MOVE: REVERSE");
+                        updateRobotStatus("MOVE: REVERSE");
                     else
-                        updateStatus("MOVE: REVERSE IS BLOCKED");
+                        updateRobotStatus("MOVE: REVERSE IS BLOCKED");
                     sendMessage("reverse");
                 } else
-                    updateStatus("SET STARTING POINT FIRST");
+                    updateRobotStatus("SET STARTING POINT FIRST");
 
             }
         });
 
 
-        turnLeftImageBtn.setOnClickListener(new View.OnClickListener() {
+        turnLeftBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 if (gridMap.getAutoUpdate())
-                    updateStatus("SET TO MANUAL MODE FIRST");
+                    updateRobotStatus("SET TO MANUAL MODE FIRST");
                 else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
                     gridMap.moveRobot("left");
-                    refreshLabel();
-                    updateStatus("TURN: LEFT");
+                    rfLabel();
+                    updateRobotStatus("TURN: LEFT");
                     sendMessage("left");
                 } else
-                    updateStatus("SET STARTING POINT FIRST");
+                    updateRobotStatus("SET STARTING POINT FIRST");
 
             }
         });
 
 
-        phoneTiltSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-
-                if (gridMap.getAutoUpdate()) {
-
-                    updateStatus("SET TO MANUAL MODE FIRST");
-
-                    phoneTiltSwitch.setChecked(false);
-
-                    compoundButton.setText("TILT OFF");
-
-                } else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
-
-                    if (phoneTiltSwitch.isChecked()) {
-
-                        compoundButton.setText("TILT ON");
-
-                        phoneTiltSwitch.setPressed(true);
-
-                        sensorManager.registerListener(MainActivity.this, sensor, sensorManager.SENSOR_DELAY_NORMAL);
-
-                        sensorHandler.post(sensorDelay);
-
-                    } else {
-
-                        try {
-
-                            sensorManager.unregisterListener(MainActivity.this);
-
-                        } catch (IllegalArgumentException e) {
-
-                            e.printStackTrace();
-
-                        }
-
-                        sensorHandler.removeCallbacks(sensorDelay);
-
-                        compoundButton.setText("TILT OFF");
-                    }
-                } else {
-
-                    updateStatus("SET STARTING POINT FIRST");
-
-                    phoneTiltSwitch.setChecked(false);
-
-                    compoundButton.setText("TILT OFF");
-                }
-            }
-        });
-
-
-        resetMapBtn.setOnClickListener(new View.OnClickListener() {
+        resetGridMapBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 gridMap.resetMap();
@@ -526,8 +469,58 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         });
 
+        tiltToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, direction);
+                if (gridMap.getAutoUpdate()) {
+
+                    updateRobotStatus("SET TO MANUAL MODE FIRST");
+
+                    tiltToggle.setChecked(false);
+
+                    compoundButton.setText("TILT OFF");
+
+                } else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
+
+                    if (tiltToggle.isChecked()) {
+
+                        compoundButton.setText("TILT ON");
+
+                        tiltToggle.setPressed(true);
+
+                        sensorManager.registerListener(MainActivity.this, sensor, sensorManager.SENSOR_DELAY_NORMAL);
+
+                        sensorHandler.post(sensorDelay);
+
+                    } else {
+
+                        try {
+
+                            sensorManager.unregisterListener(MainActivity.this);
+
+                        } catch (IllegalArgumentException e) {
+
+                            e.printStackTrace();
+
+                        }
+
+                        sensorHandler.removeCallbacks(sensorDelay);
+
+                        compoundButton.setText("TILT OFF");
+                    }
+                } else {
+
+                    updateRobotStatus("SET STARTING POINT FIRST");
+
+                    tiltToggle.setChecked(false);
+
+                    compoundButton.setText("TILT OFF");
+                }
+            }
+        });
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, direction);
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
@@ -535,7 +528,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         directionDropdown.setOnItemSelectedListener(this);
 
-        exploredImageBtn.setOnClickListener(new View.OnClickListener() {
+        exploredBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -543,7 +536,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                     gridMap.setExploredStatus(true);
 
-                    gridMap.toggleCheckedBtn("exploredImageBtn");
+                    gridMap.toggleCheckedBtn("exploredBtn");
 
                 } else
                     gridMap.setSetObstacleStatus(false);
@@ -552,7 +545,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
 
 
-        obstacleImageBtn.setOnClickListener(new View.OnClickListener() {
+        obstacleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -560,7 +553,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                     gridMap.setSetObstacleStatus(true);
 
-                    gridMap.toggleCheckedBtn("obstacleImageBtn");
+                    gridMap.toggleCheckedBtn("obstacleBtn");
 
                 } else
                     gridMap.setSetObstacleStatus(false);
@@ -569,7 +562,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
 
 
-        clearImageBtn.setOnClickListener(new View.OnClickListener() {
+        unexploredBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -577,7 +570,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                     gridMap.setUnSetCellStatus(true);
 
-                    gridMap.toggleCheckedBtn("clearImageBtn");
+                    gridMap.toggleCheckedBtn("unexploredBtn");
 
                 } else
                     gridMap.setUnSetCellStatus(false);
@@ -592,9 +585,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                 if (manualAutoToggleBtn.getText().equals("AUTO")) {
 
-                    if (phoneTiltSwitch.isChecked()) {
+                    if (tiltToggle.isChecked()) {
 
-                        phoneTiltSwitch.setChecked(false);
+                        tiltToggle.setChecked(false);
 
                         try {
 
@@ -654,7 +647,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
         Toolbar toolbar = findViewById(R.id.toolbar);
+
         setSupportActionBar(toolbar);
+
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
 
@@ -709,7 +704,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long id) {
         editor.putString("direction", direction[position]);
-        refreshDirection(direction[position]);
+        rfFacing(direction[position]);
         editor.commit();
 
     }
@@ -719,15 +714,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void onNothingSelected(AdapterView<?> arg0) {
     }
 
-    private void refreshLabel() {
-        xAxisTextView.setText(String.valueOf(gridMap.getCurrentCoordinates()[0] - 1));
-        yAxisTextView.setText(String.valueOf(gridMap.getCurrentCoordinates()[1] - 1));
+    private void rfLabel() {
+        yAxisText.setText(String.valueOf(gridMap.getCurrentCoordinates()[1] - 1));
+
+        xAxisText.setText(String.valueOf(gridMap.getCurrentCoordinates()[0] - 1));
 
 
     }
 
 
-    public void refreshMessage() {
+    public void rfMessage() {
 
         receivedMessageText.setText(sharedPreferences.getString("receivedText", ""));
 
@@ -737,7 +733,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
 
-    public void refreshDirection(String direction) {
+    public void rfFacing(String direction) {
         gridMap.setRobotDirection(direction);
         if (!(direction.equals("None"))) {
             switch (direction) {
@@ -759,8 +755,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
 
-    private void updateStatus(String message) {
-        robotStatusTextView.setText(message);
+    private void updateRobotStatus(String message) {
+        robotStatusText.setText(message);
     }
 
 
@@ -946,18 +942,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        switch (requestCode) {
-            case 1:
-                if (resultCode == Activity.RESULT_OK) {
+        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
 
-                    BTDevice = data.getExtras().getParcelable("BTDevice");
+            BTDevice = data.getExtras().getParcelable("BTDevice");
 
-                    myUUID = (UUID) data.getSerializableExtra("deviceUUID");
+            myUUID = (UUID) data.getSerializableExtra("deviceUUID");
 
-                }
         }
     }
-
 
     Handler sensorHandler = new Handler();
 
@@ -973,12 +965,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     };
 
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int i) {
-    }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
+
 
         float x = event.values[0];
 
@@ -992,7 +982,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                 gridMap.moveRobot("forward");
 
-                refreshLabel();
+                rfLabel();
 
                 sendMessage("forward");
 
@@ -1000,7 +990,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                 gridMap.moveRobot("back");
 
-                refreshLabel();
+                rfLabel();
 
                 sendMessage("reverse");
 
@@ -1008,7 +998,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                 gridMap.moveRobot("left");
 
-                refreshLabel();
+                rfLabel();
 
                 sendMessage("left");
 
@@ -1016,13 +1006,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                 gridMap.moveRobot("right");
 
-                refreshLabel();
+                rfLabel();
 
                 sendMessage("right");
             }
         }
 
         sensorFlag = false;
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
     }
 
     @Override
@@ -1061,7 +1055,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         }
     }
-
 
     @Override
     protected void onResume() {
