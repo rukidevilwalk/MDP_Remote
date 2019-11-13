@@ -6,136 +6,141 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.jack.mdpremote.R;
 
 public class ReconfigureFragment extends DialogFragment {
-    private static final String TAG = "ReconfigureFragment";
-    // for saving values
+
+    EditText f1Edit;
+
+    EditText f2Edit;
+
+    String f1;
+
+    String f2;
+
+    View rootView;
+
     SharedPreferences sharedPreferences;
+
     SharedPreferences.Editor editor;
 
-    // declaration of variables
-    Button saveBtn, cancelReconfigureBtn;
-    EditText f1ValueEditText, f2ValueEditText;
-    String f1Value, f2Value;
-    View rootView;
+    Button saveBtn;
+
+    Button cancelReconfigBtn;
+
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        showLog("Entering onCreateView");
-        // create dialog fragment view
+
         rootView = inflater.inflate(R.layout.activity_reconfigure, container, false);
+
         super.onCreate(savedInstanceState);
 
-        // set title
+
         getDialog().setTitle("Reconfiguration");
 
-        // find all view by id
-        saveBtn = rootView.findViewById(R.id.saveBtn);
-        cancelReconfigureBtn = rootView.findViewById(R.id.cancelReconfigureBtn);
-        f1ValueEditText = rootView.findViewById(R.id.f1ValueEditText);
-        f2ValueEditText = rootView.findViewById(R.id.f2ValueEditText);
+        f1Edit = rootView.findViewById(R.id.f1ValueEditText);
 
-        // set TAG and Mode for shared preferences
+        f2Edit = rootView.findViewById(R.id.f2ValueEditText);
+
+        saveBtn = rootView.findViewById(R.id.saveBtn);
+
+        cancelReconfigBtn = rootView.findViewById(R.id.cancelReconfigureBtn);
+
         sharedPreferences = getActivity().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
 
         if (sharedPreferences.contains("F1")) {
-            f1ValueEditText.setText(sharedPreferences.getString("F1", ""));
-            f1Value = sharedPreferences.getString("F1", "");
-            // hide keyboard
+
+            f1Edit.setText(sharedPreferences.getString("F1", ""));
+
+            f1 = sharedPreferences.getString("F1", "");
+
             getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         }
+
         if (sharedPreferences.contains("F2")) {
-            f2ValueEditText.setText(sharedPreferences.getString("F2", ""));
-            f2Value = sharedPreferences.getString("F2", "");
+
+            f2Edit.setText(sharedPreferences.getString("F2", ""));
+
+            f2 = sharedPreferences.getString("F2", "");
         }
 
-        // not used, restore state for states when tilting devices
         if (savedInstanceState != null) {
-            f1Value = savedInstanceState.getStringArray("F1F2 value")[0];
-            f2Value = savedInstanceState.getStringArray("F1F2 value")[1];
+
+            f1 = savedInstanceState.getStringArray("F1F2 value")[0];
+
+            f2 = savedInstanceState.getStringArray("F1F2 value")[1];
         }
 
-        // when save button clicked
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showLog("Clicked saveBtn");
-                // allows editing to shared preferences
+
                 editor = sharedPreferences.edit();
-                // insert key and string value
-                editor.putString("F1", f1ValueEditText.getText().toString());
-                editor.putString("F2", f2ValueEditText.getText().toString());
-                // saving values to shared preferences
-                editor.commit();
+
+                editor.putString("F1", f1Edit.getText().toString());
+
+                editor.putString("F2", f2Edit.getText().toString());
+
+                editor.apply();
+
                 if (!sharedPreferences.getString("F1", "").equals(""))
-                    f1Value = f1ValueEditText.getText().toString();
+                    f1 = f1Edit.getText().toString();
+
                 if (!sharedPreferences.getString("F2", "").equals(""))
-                    f2Value = f2ValueEditText.getText().toString();
-                Toast.makeText(getActivity(), "Saving values...", Toast.LENGTH_SHORT).show();
-                showLog("Exiting saveBtn");
-                // close dialog fragment
+                    f2 = f2Edit.getText().toString();
+
+
                 getDialog().dismiss();
             }
         });
 
-        // when cancel button clicked
-        cancelReconfigureBtn.setOnClickListener(new View.OnClickListener() {
+        cancelReconfigBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showLog("Clicked cancelReconfigureationBtn");
-                // restore values when new values not saved
+
                 if (sharedPreferences.contains("F1"))
-                    f1ValueEditText.setText(sharedPreferences.getString("F1", ""));
+                    f1Edit.setText(sharedPreferences.getString("F1", ""));
+
                 if (sharedPreferences.contains("F2"))
-                    f2ValueEditText.setText(sharedPreferences.getString("F2", ""));
-                showLog("Exiting cancelReconfigureationBtn");
-                // close dialog fragment
+                    f2Edit.setText(sharedPreferences.getString("F2", ""));
+
                 getDialog().dismiss();
             }
         });
-        showLog("Exiting onCreateView");
+
         return rootView;
     }
 
     @Override
     public void onDismiss(DialogInterface dialog) {
-        showLog("Entering onDismiss");
-        super.onDismiss(dialog);
-        // if value exist and does not equal to empty string
-        if (f1Value != null && !f1Value.equals(""))
-            ((SendReceive) getActivity()).f1Btn.setContentDescription(f1Value);
-        if (f2Value != null && !f2Value.equals(""))
-            ((SendReceive) getActivity()).f2Btn.setContentDescription(f2Value);
-        f1ValueEditText.clearFocus();
 
-        showLog("Exiting onDismiss");
+        super.onDismiss(dialog);
+
+        if (f1 != null && !f1.equals(""))
+            ((SendReceive) getActivity()).f1Btn.setContentDescription(f1);
+
+        if (f2 != null && !f2.equals(""))
+            ((SendReceive) getActivity()).f2Btn.setContentDescription(f2);
+
+        f1Edit.clearFocus();
+
     }
 
-    // not used, for saving states when tilting devices
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        showLog("Entering onSaveInstanceState");
+
         super.onSaveInstanceState(outState);
 
-        String[] value = new String[]{f1Value, f2Value};
-        showLog("Exiting onSaveInstanceState");
-        outState.putStringArray(TAG, value);
     }
 
-    // show log message
-    private void showLog(String message) {
-        Log.d(TAG, message);
-    }
 }
