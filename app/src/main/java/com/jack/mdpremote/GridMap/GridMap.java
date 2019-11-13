@@ -1567,6 +1567,6 @@ public class GridMap extends View {
         sharedPreferences = this.getContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
 
         editor = sharedPreferences.edit();
-        
+
     }
 }
